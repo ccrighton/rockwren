@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rockwren</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {{render_template(web_path + "/style.css")}}
+    </head>
+    <body> <h1>Rockwren</h1>
+        <h2>{{device.name}}</h2>
+        <h2>MQTT Settings</h2>
+            <form class="center" action="/mqtt_config" method="POST">
+                <div class="table center">
+                <div class="mqttform">
+                    <label for="mqtt_server">MQTT Server:</label>
+                    <input class="mqttform" type="text" id="mqtt_server" name="mqtt_server" value="{{mqtt_server}}">
+                </div>
+                <div class="mqttform">
+                    <label for="mqtt_port">MQTT Port:</label>
+                    <input class="mqttform" type="number" id="mqtt_port" name="mqtt_port" value="{{mqtt_port}}" min="0" max="65536">
+                </div>
+                </div>
+                <div class="center">
+                <input class="button center" type="submit" value="Submit">
+                </div>
+            </form>
+        <h2>Configuration</h2>
+        <table class="center">
+        <tr><td>IP Address</td><td>{{ip_address}}</td></tr>
+        <tr><td>Subnet Mask</td><td>{{subnet_mask}}</td></tr>
+        <tr><td>Gateway</td><td>{{gateway}}</td></tr>
+        <tr><td>DNS Server</td><td>{{dns_server}}</td></tr>
+        <tr><td>MQTT Server</td><td>{{mqtt_server}}</td></tr>
+        </table>
+        <p><button class="button" onclick="window.location.href='/';">Home</button></p>
+    </body>
+</html>

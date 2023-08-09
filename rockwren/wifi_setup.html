@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rockwren</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {{render_template(web_path + "/style.css")}}
+    </head>
+    <body> <h1>Rockwren</h1>
+        </table>
+        <h3>{{device.name()}}</h3>
+        <p><button class="button b2" onclick="window.location.href='/device/on';">ON</button></p>
+        <p><button  class="button b3" onclick="window.location.href='/device/off';">OFF</button></p>
+        <p><button  class="button b3" onclick="window.location.href='/device/off';">TOGGLE</button></p>
+        <table class="center">
+        <tr><td>Device state: </td><td>{{"ON" if device.is_on() else "OFF"}}</td></tr>
+        </table>
+        <h3>Wifi Setup</h3>
+        <p>{{error}}</p>
+        <form class="mqttform" action="/setup" method="POST">
+          <div class="table center">
+          <div class="mqttform">
+          <label for="ssid">SSID:</label>
+          <input class="mqttform" type="text" id="ssid" name="ssid" value="">
+          </div>
+          <div class="mqttform">
+          <label for="password">Password:</label>
+          <input class="mqttform" type="password" id="password" name="password" value="">
+          </div>
+          </div>
+          <input class="button" type="submit" value="Submit">
+        </form>
+        <table class='center'><tr><th>SSID</th><th>RSSI</th></tr>
+        {{"".join([f"<tr><td>{w[0]}</td><td>{w[1]}</td></tr>\r\n" for w in networks])}}
+        </table>
+    </body>
+</html>

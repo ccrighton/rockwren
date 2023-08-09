@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rockwren</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {{render_template(web_path + "/style.css")}}
+    </head>
+    <body> <h1>Rockwren</h1>
+        <h2>{{device.name}}</h2>
+        {{'<h3 style="color:#008000;">ON</h3>' if device.is_on() else '<h3 style="color:#FF0000;">OFF</h3>'}}
+        <p><button  class="button" onclick="window.location.href='/device/toggle';">TOGGLE</button></p>
+        <table class="center">
+        <h2>Configuration</h2>
+        <p><button class="button" onclick="window.location.href='/mqtt_config';">MQTT Configuration</button></p>
+        <table class="center">
+        <tr><td>IP Address</td><td>{{ip_address}}</td></tr>
+        <tr><td>Subnet Mask</td><td>{{subnet_mask}}</td></tr>
+        <tr><td>Gateway</td><td>{{gateway}}</td></tr>
+        <tr><td>DNS Server</td><td>{{dns_server}}</td></tr>
+        <tr><td>MQTT Server</td><td>{{mqtt_server}}</td></tr>
+        </table>
+    </body>
+</html>

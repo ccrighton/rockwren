@@ -1,0 +1,16 @@
+        <style>html{font-family: Helvetica; display:inline-block; margin: 0px auto; text-align: center;}
+               h2{color: #000000; padding: 2vh;}
+               p{font-size: 1.0rem;}
+               .button{border:0;border-radius:0.3rem;background:#1fa3ec;color:#ffffff;line-height:2.4rem;padding: 4px 8px;
+               font-size:1.2rem;-webkit-transition-duration:0.4s;transition-duration:0.4s;cursor:pointer;}
+               .button:hover{background:#0e70a4;}
+               .b2{background-color: #2E8B57;}
+               .b2:hover{background:#008000;}
+               .b3{background-color: #FF0000;}
+               .b3:hover{background:#B22222;}
+               .center { margin-left: auto; margin-right: auto;}
+               div.table { display: table; }
+               div.mqttform { display: table-row; }
+               label, input.mqttform { display: table-cell; margin-bottom: 10px;}
+               label { padding-right: 10px; }
+        </style>
