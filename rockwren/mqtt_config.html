@@ -19,6 +19,14 @@
                     <label for="mqtt_port">MQTT Port:</label>
                     <input class="mqttform" type="number" id="mqtt_port" name="mqtt_port" value="{{mqtt_port}}" min="0" max="65536">
                 </div>
+                <div class="mqttform">
+                    <label for="mqtt_client_cert">MQTT Client Certificate:</label>
+                    <textarea class="mqttform" id="mqtt_client_cert" name="mqtt_client_cert">{{mqtt_client_cert}}</textarea>
+                </div>
+                <div class="mqttform">
+                    <label for="mqtt_client_key">MQTT Client Private Key:</label>
+                    <textarea class="mqttform" id="mqtt_client_key" name="mqtt_client_key">{{mqtt_client_key}}</textarea>
+                </div>
                 </div>
                 <div class="center">
                 <input class="button center" type="submit" value="Submit">

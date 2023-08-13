@@ -1,3 +1,4 @@
+import sys
 import uasyncio
 
 from umqtt.robust2 import MQTTClient
@@ -7,6 +8,7 @@ import machine
 import ujson
 import rockwren.env as env
 import rockwren.rockwren as rockwren
+import rockwren.utils as utils
 
 
 def noop_topic_handler(topic, message):
@@ -82,15 +84,27 @@ class MqttDevice:
 
     def run(self, uasyncio_loop):
         print(f"Begin connection with MQTT Broker :: {self.MQTT_SERVER}:{self.MQTT_PORT}")
-        if env.mqtt_client_key and env.mqtt_client_cert
-        self._mqtt_client = MQTTClient(self.device_id, self.MQTT_SERVER,
-                                       port=self.MQTT_PORT, keepalive=env.mqtt_keepalive)
-        self._mqtt_client.set_callback(self.subscription_callback)
+        require_ssl = False
+        ssl_params = None
+
+        if env.mqtt_client_key and env.mqtt_client_cert:
+            ssl_params = {"key": utils.pem_to_der(env.mqtt_client_key),
+                          "cert": utils.pem_to_der(env.mqtt_client_cert),
+                          "server_side": False}
+            require_ssl = True
+
+        self._mqtt_client = MQTTClient(self.device_id.encode(), self.MQTT_SERVER.encode(),
+                                       port=self.MQTT_PORT, keepalive=env.mqtt_keepalive,
+                                       ssl=require_ssl, ssl_params=ssl_params)
+        self._mqtt_client.DEBUG=True
+
         self._mqtt_client.set_last_will(self.availability_topic.encode(), b'offline', retain=True)
         self._mqtt_client.connect()
 
         uasyncio.create_task(self.ensure_connection())
         uasyncio.create_task(self.mqtt_command_handler())
+
+        self._mqtt_client.set_callback(self.subscription_callback)
 
         self._mqtt_client.subscribe(self.device_topic.encode() + b'/#')
         self._mqtt_client.publish(self.availability_topic.encode(), b'online', retain=True)
@@ -102,10 +116,14 @@ class MqttDevice:
         while True:
             if self._mqtt_client.is_conn_issue():
                 while self._mqtt_client.is_conn_issue():
+                    print("mqtt trying to reconnect")
                     await uasyncio.sleep(1)
                     # If the connection is successful, the is_conn_issue
                     # method will not return a connection error.
-                    self._mqtt_client.reconnect()
+                    try:
+                        self._mqtt_client.reconnect()
+                    except Exception as e:
+                        sys.print_exception(e)
                 else:
                     self._mqtt_client.publish(self.availability_topic.encode(), b'online', retain=True)
                     self._mqtt_client.resubscribe()

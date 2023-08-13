@@ -3,6 +3,7 @@ import uasyncio
 from machine import Pin
 import rockwren.env as env
 import rockwren.networking as networking
+import rockwren.utils as utils
 import rockwren.rockwren as rockwren
 from phew import server, template, logging
 
@@ -75,7 +76,9 @@ def mqtt_config(request):
                                     gateway=env.connection_params["gateway"],
                                     dns_server=env.connection_params["dns_server"],
                                     mqtt_server=env.mqtt_server,
-                                    mqtt_port=env.mqtt_port)
+                                    mqtt_port=str(env.mqtt_port),
+                                    mqtt_client_cert=env.mqtt_client_cert,
+                                    mqtt_client_key=env.mqtt_client_key)
 
 
 @webapp.route("/favicon.svg", methods=["GET"])
@@ -92,13 +95,27 @@ def mqtt_config_save(request):
 
     mqtt_server = request.form.get("mqtt_server", None)
     if mqtt_server:
+        print(f"{utils.is_fqdn(mqtt_server)}: '{mqtt_server}'")
         numbers = mqtt_server.split(".")
-        if len(numbers) == 4:
+        if len(numbers) == 4 and all(number.isdigit() for number in numbers):
+            networking.save_network_config_key("mqtt_server", mqtt_server)
+            mqtt_config_updated = True
+        elif utils.is_fqdn(mqtt_server):
             networking.save_network_config_key("mqtt_server", mqtt_server)
             mqtt_config_updated = True
     mqtt_port = request.form.get("mqtt_port", None)
     if mqtt_port:
         networking.save_network_config_key("mqtt_port", int(mqtt_port))
+        mqtt_config_updated = True
+
+    mqtt_client_cert = request.form.get("mqtt_client_cert", None)
+    if mqtt_client_cert:
+        networking.save_network_config_key("mqtt_client_cert", mqtt_client_cert)
+        mqtt_config_updated = True
+
+    mqtt_client_key = request.form.get("mqtt_client_key", None)
+    if mqtt_client_key:
+        networking.save_network_config_key("mqtt_client_key", mqtt_client_key)
         mqtt_config_updated = True
 
     if mqtt_config_updated:
