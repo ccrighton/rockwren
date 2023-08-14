@@ -78,7 +78,7 @@ def mqtt_config(request):
                                     mqtt_server=env.mqtt_server,
                                     mqtt_port=str(env.mqtt_port),
                                     mqtt_client_cert=env.mqtt_client_cert,
-                                    mqtt_client_key=env.mqtt_client_key)
+                                    mqtt_client_key_stored=env.mqtt_client_key is not None)
 
 
 @webapp.route("/favicon.svg", methods=["GET"])

@@ -21,11 +21,11 @@
                 </div>
                 <div class="mqttform">
                     <label for="mqtt_client_cert">MQTT Client Certificate:</label>
-                    <textarea class="mqttform" id="mqtt_client_cert" name="mqtt_client_cert">{{mqtt_client_cert}}</textarea>
+                    <textarea class="mqttform" id="mqtt_client_cert" name="mqtt_client_cert" rows="10" cols="70">{{mqtt_client_cert}}</textarea>
                 </div>
                 <div class="mqttform">
                     <label for="mqtt_client_key">MQTT Client Private Key:</label>
-                    <textarea class="mqttform" id="mqtt_client_key" name="mqtt_client_key">{{mqtt_client_key}}</textarea>
+                    <textarea class="mqttform" id="mqtt_client_key" name="mqtt_client_key" rows="10" cols="70" placeholder="{{'Key stored' if mqtt_client_key_stored else 'Enter key in PEM format'}}"></textarea>
                 </div>
                 </div>
                 <div class="center">

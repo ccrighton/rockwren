@@ -9,9 +9,9 @@
                .b3{background-color: #FF0000;}
                .b3:hover{background:#B22222;}
                .center { margin-left: auto; margin-right: auto;}
-               div.table { display: table; }
+               div.table { display: table; text-align: left;}
                div.mqttform { display: table-row; }
-               label, input.mqttform { display: table-cell; margin-bottom: 10px;}
+               label, input.mqttform { display: table-cell; margin-bottom: 10px; vertical-align: top; text-align: left;}
                label { padding-right: 10px; }
                logtext { center; font-family: 'Courier New', monospace; }
         </style>
