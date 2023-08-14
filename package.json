@@ -1,0 +1,28 @@
+{
+  "urls": [
+    ["rockwren/__init__.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/__init__.py"],
+    ["rockwren/accesspoint.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/accesspoint.py"],
+    ["rockwren/env.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/env.py"],
+    ["rockwren/favicon.svg", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/favicon.svg"],
+    ["rockwren/index.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/index.html"],
+    ["rockwren/jsondb.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/jsondb.py"],
+    ["rockwren/mqtt_client.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/mqtt_client.py"],
+    ["rockwren/mqtt_config.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/mqtt_config.html"],
+    ["rockwren/networking.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/networking.py"],
+    ["rockwren/page_not_found.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/page_not_found.html"],
+    ["rockwren/restart.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/restart.html"],
+    ["rockwren/rockwren.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/rockwren.py"],
+    ["rockwren/secrets.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/secrets.py"],
+    ["rockwren/style.css", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/style.css"],
+    ["rockwren/utils.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/utils.py"],
+    ["rockwren/viewlogs.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/viewlogs.py"],
+    ["rockwren/web.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/web.py"],
+    ["rockwren/wifi_setup.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/wifi_setup.html"]
+  ],
+  "deps": [
+    ["umqtt-simple2", "latest"],
+    ["umqtt-robust2", "latest"],
+    ["github:ccrighton/phew", "main"]
+  ],
+  "version": "0.1"
+}
