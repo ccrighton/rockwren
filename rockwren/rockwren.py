@@ -1,6 +1,7 @@
 import uasyncio
 import sys
 import os
+import ntptime
 import rockwren.networking as networking
 import rockwren.web as web
 import rockwren.accesspoint as accesspoint
@@ -25,7 +26,7 @@ class Device:
     def __str__(self):
         return f"{self.name}(state={self.state})"
 
-    def command_handler(self):
+    def command_handler(self, topic, message):
         """
         Apply the state of the device on change and notify listeners
         The implementation must call ``super.command_handler()`` last.
@@ -124,6 +125,8 @@ def fly(the_device: Device):
     try:
         set_global_exception(uasyncio.get_event_loop())
         rockwren_env.connection_params = networking.connect()
+
+        ntptime.settime()
 
         client = mqtt_client.MqttDevice(the_device, rockwren_env.mqtt_server, rockwren_env.connection_params,
                                         discovery_function=the_device.discovery_function(),
