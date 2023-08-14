@@ -14,4 +14,7 @@
                label, input.mqttform { display: table-cell; margin-bottom: 10px; vertical-align: top; text-align: left;}
                label { padding-right: 10px; }
                logtext { center; font-family: 'Courier New', monospace; }
+               #configtable { center; margin-left: auto; margin-right: auto; text-align: left;}
+               #configtable td, # configtable th { text-align: left; }
+               .cell-highlight { font-weight: bold; }
         </style>

@@ -33,12 +33,12 @@
                 </div>
             </form>
         <h2>Configuration</h2>
-        <table class="center">
-        <tr><td>IP Address</td><td>{{ip_address}}</td></tr>
-        <tr><td>Subnet Mask</td><td>{{subnet_mask}}</td></tr>
-        <tr><td>Gateway</td><td>{{gateway}}</td></tr>
-        <tr><td>DNS Server</td><td>{{dns_server}}</td></tr>
-        <tr><td>MQTT Server</td><td>{{mqtt_server}}</td></tr>
+        <table id="configtable">
+        <tr><td class="cell-highlight">IP Address:</td><td>{{ip_address}}</td></tr>
+        <tr><td class="cell-highlight">Subnet Mask:</td><td>{{subnet_mask}}</td></tr>
+        <tr><td class="cell-highlight">Gateway:</td><td>{{gateway}}</td></tr>
+        <tr><td class="cell-highlight">DNS Server:</td><td>{{dns_server}}</td></tr>
+        <tr><td class="cell-highlight">MQTT Server:</td><td>{{mqtt_server}}</td></tr>
         </table>
         <p><button class="button" onclick="window.location.href='/';">Home</button></p>
     </body>
