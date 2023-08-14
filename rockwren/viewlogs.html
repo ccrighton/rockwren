@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rockwren</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {{render_template(web_path + "/style.css")}}
+    </head>
+    <body> <h1>Rockwren</h1>
+        <h2>{{device.name}}</h2>
+        {{'<h3 style="color:#008000;">ON</h3>' if device.is_on() else '<h3 style="color:#FF0000;">OFF</h3>'}}
+        <p><button  class="button" onclick="window.location.href='/device/toggle';">TOGGLE</button></p>
+        <h2>Logs</h2>
+        <textarea class="logtext" id="logtext" name="logtext" rows="30" cols="120">{{logtext}}</textarea>
+        <p><button class="button" onclick="window.location.href='/';">Home</button></p>
+    </body>
+</html>

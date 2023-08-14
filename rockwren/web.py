@@ -123,6 +123,17 @@ def mqtt_config_save(request):
     else:
         return server.redirect("/mqtt_config", status=302)
 
+@webapp.route("/viewlogs", methods=["GET"])
+def mqtt_config(request):
+
+    log_text = ""
+    with open("log.txt") as f:
+        log_text = f.read()
+
+    return template.render_template(dir_path + "/viewlogs.html",
+                                    web_path=dir_path,
+                                    device=device,
+                                    logtext=log_text)
 
 @webapp.catchall()
 def page_not_found(request):

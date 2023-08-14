@@ -13,4 +13,5 @@
                div.mqttform { display: table-row; }
                label, input.mqttform { display: table-cell; margin-bottom: 10px;}
                label { padding-right: 10px; }
+               logtext { center; font-family: 'Courier New', monospace; }
         </style>
