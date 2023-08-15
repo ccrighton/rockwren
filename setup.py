@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 from setuptools import setup
 
 setup(
@@ -12,8 +16,8 @@ setup(
     author="Charlie Crighton",
     maintainer="Charlie Crighton",
     maintainer_email="rockwren@crighton.nz",
-    license="GPLv3",
-    license_files="LICENSE",
+    license="GPLv3-or-later",
+    license_files="LICENSES",
     packages=["rockwren"],
     data_files=[("rockwren", ["rockwren/favicon.svg",
                               "rockwren/index.html",

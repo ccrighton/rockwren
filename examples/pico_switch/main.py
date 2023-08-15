@@ -1,4 +1,7 @@
-import ujson
+# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 from machine import Pin
 from rockwren import rockwren
 from rockwren import mqtt_client

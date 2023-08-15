@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 [submodule "phew"]
 	path = phew
 	url = git@github.com:ccrighton/phew.git

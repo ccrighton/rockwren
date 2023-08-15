@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import os
 import ujson
 import io
@@ -26,5 +30,3 @@ class JsonDB(dict):  # dicts take a mapping or iterable as their optional first 
     def save(self):
         with open(self._db_file, "w+") as f:
             ujson.dump(self, f)
-
-

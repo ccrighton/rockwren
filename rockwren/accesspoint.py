@@ -1,3 +1,8 @@
+# Copyright 2023 Charles Crighton <rockwren@crighton.nz>
+# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import machine
 import uasyncio
 import network
@@ -103,4 +108,3 @@ def start_ap():
         accesspointapp.run()
     except Exception as e:
         print(e)
-

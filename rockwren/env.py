@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ssid = ''
 first_boot = False
 mqtt_server = '192.168.1.7'

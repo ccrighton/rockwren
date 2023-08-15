@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import ujson
 from machine import Pin
 from rockwren import rockwren

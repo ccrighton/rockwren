@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import uasyncio
 import sys
 import os
@@ -143,4 +147,3 @@ def fly(the_device: Device):
         sys.print_exception(e)
         uasyncio.new_event_loop()  # Clear retained state
         #machine.reset()
-

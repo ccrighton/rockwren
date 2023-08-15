@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 from pypi_json import PyPIJSON
 from pprint import pprint
 from urllib.request import urlretrieve
@@ -35,12 +39,12 @@ def download_and_extract(package_name):
     # open file
     with tarfile.open(package_filename) as f:
         print(f.getmembers())
-        f.extractall(path='../deploy/lib', members=tar_members_stripped(f, 1))
+        f.extractall(path='deploy/lib', members=tar_members_stripped(f, 1))
 
 
 try:
-    os.mkdir("../deploy")
-    os.mkdir("../deploy/lib")
+    os.mkdir("deploy")
+    os.mkdir("deploy/lib")
 except Exception as e:
     pprint(e)
     pass
