@@ -2,4 +2,4 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-ssid_password=''
+ssid_password = ''

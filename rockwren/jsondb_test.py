@@ -23,7 +23,7 @@ class TestJsonDbMethods(unittest.TestCase):
 
         with open("db.json") as f:
             s = f.read()
-            self.assertEqual(s, '{"first_boot": true, "ssid": "elba-main", "password": "blah123"}' )
+            self.assertEqual(s, '{"first_boot": true, "ssid": "elba-main", "password": "blah123"}')
 
     def test_load_save_clear_save(self):
         db = jsondb.JsonDB()
@@ -78,7 +78,6 @@ class TestJsonDbMethods(unittest.TestCase):
             s = f.read()
             self.assertEqual(s, '{"first_boot": false, "ssid": "elba-main", "password": "blah123"}')
 
-
     def test_m_load_save_change_save(self):
         cert = "-----BEGIN CERTIFICATE-----MIIDWTCCAkGgAwIBAgIUOAWT/5Nyq/xfGR79/FwZfkVhzvAwDQYJKoZIhvcNAQELBQAwTTFL" \
                + "MEkGA1UECwxCQW1hem9uIFdlYiBTZXJ2aWNlcyBPPUFtYXpvbi5jb20gSW5jLiBMPVNlYXR0bGUgU1Q9V2FzaGluZ3RvbiBDP" \
@@ -115,7 +114,6 @@ class TestJsonDbMethods(unittest.TestCase):
             s = f.read()
             self.assertEqual(False, ujson.loads(s)['first_boot'])
             self.assertEqual(cert, ujson.loads(s)['mqtt_client_cert'])
-
 
 
 if __name__ == '__main__':

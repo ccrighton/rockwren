@@ -28,7 +28,7 @@ def connect(hostname='rockwren'):
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     wlan.connect(env.ssid, secrets.ssid_password)
-    first_boot_retries=0
+    first_boot_retries = 0
     while not wlan.isconnected():
         print('Waiting for connection...')
         print(wlan.status())
@@ -90,21 +90,21 @@ def load_network_config():
         secrets.ssid_password = db[PASSWORD_KEY]
         try:
             env.mqtt_server = db["mqtt_server"]
-        except:
+        except Exception:
             print("mqtt_server not set using default")
         try:
             env.mqtt_port = db["mqtt_port"]
-        except:
+        except Exception:
             print("mqtt_port not set using default")
         try:
             env.mqtt_client_cert = db["mqtt_client_cert"]
-        except:
+        except Exception:
             print("mqtt_port not set using default")
         try:
             env.mqtt_client_key = db["mqtt_client_key"]
-        except:
+        except Exception:
             print("mqtt_port not set using default")
-    except:
+    except Exception:
         print("Exception loading network config")
 
 
@@ -115,7 +115,7 @@ def save_network_config(ssid: str, password: str):
         db[SSID_KEY] = ssid
         db[PASSWORD_KEY] = password
         db.save()
-    except:
+    except Exception:
         print("Exception saving network config")
 
 
@@ -125,7 +125,7 @@ def save_network_config_key(key: str, value):
         db.load()
         db[key] = value
         db.save()
-    except:
+    except Exception:
         print("Exception saving network config")
 
 

@@ -11,7 +11,7 @@ import rockwren.utils as utils
 import rockwren.rockwren as rockwren
 from phew import server, template, logging
 
-dir_path=__file__[:__file__.rfind('/')]
+dir_path = __file__[:__file__.rfind('/')]
 
 webapp = server.Phew()
 
@@ -127,6 +127,7 @@ def mqtt_config_save(request):
     else:
         return server.redirect("/mqtt_config", status=302)
 
+
 @webapp.route("/viewlogs", methods=["GET"])
 def mqtt_config(request):
 
@@ -138,6 +139,7 @@ def mqtt_config(request):
                                     web_path=dir_path,
                                     device=device,
                                     logtext=log_text)
+
 
 @webapp.catchall()
 def page_not_found(request):

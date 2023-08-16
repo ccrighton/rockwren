@@ -5,6 +5,7 @@
 import re
 import ubinascii
 
+
 def is_fqdn(hostname: str) -> bool:
     """
     https://en.m.wikipedia.org/wiki/Fully_qualified_domain_name
@@ -30,6 +31,7 @@ def is_fqdn(hostname: str) -> bool:
 
 
 def pem_to_der(pem):
-    pem = ''.join(pem.split('\n')[1:-2]) # remove -----BEGIN PUB KEY... lines and concatenate
+    # remove -----BEGIN PUB KEY... lines and concatenate
+    pem = ''.join(pem.split('\n')[1:-2])
     der = ubinascii.a2b_base64(pem)
     return der

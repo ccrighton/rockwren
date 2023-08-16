@@ -11,14 +11,14 @@ import os
 
 try:
     import usocket as socket
-except:
+except Exception:
     import socket
 
 from phew import server, template
 
 ap = None
 accesspointapp = server.Phew()
-dir_path=__file__[:__file__.rfind('/')]
+dir_path = __file__[:__file__.rfind('/')]
 
 
 def scan_networks(net: network.WLAN):
@@ -48,7 +48,7 @@ def wifi_setup_save(request):
     if ssid and password and ssid != "" and password != "":
         try:
             networking.save_network_config(ssid, password)
-        except:
+        except Exception:
             print("failed to save network config")
 
         return server.redirect("/restart", status=303)

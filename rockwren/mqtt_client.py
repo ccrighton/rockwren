@@ -100,7 +100,7 @@ class MqttDevice:
         self._mqtt_client = MQTTClient(self.device_id.encode(), self.MQTT_SERVER.encode(),
                                        port=self.MQTT_PORT, keepalive=env.mqtt_keepalive,
                                        ssl=require_ssl, ssl_params=ssl_params)
-        self._mqtt_client.DEBUG=True
+        self._mqtt_client.DEBUG = True
 
         self._mqtt_client.set_last_will(self.availability_topic.encode(), b'offline', retain=True)
         self._mqtt_client.connect()
@@ -208,7 +208,6 @@ def default_discovery(mqtt_client: MqttDevice):
                 "configuration_url": f"http://{mqtt_client.connection_params['ip_address']}/"
             }
             }
-
 
 
 #    def send_remove_discovery(self):

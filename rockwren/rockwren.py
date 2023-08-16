@@ -146,4 +146,4 @@ def fly(the_device: Device):
     except Exception as e:
         sys.print_exception(e)
         uasyncio.new_event_loop()  # Clear retained state
-        #machine.reset()
+        # machine.reset()
