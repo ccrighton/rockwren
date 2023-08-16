@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-
 import os
+
 import python_minifier
 
 os.chdir('deploy/lib/phew')

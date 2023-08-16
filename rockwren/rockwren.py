@@ -1,22 +1,34 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+"""
 
-import uasyncio
-import sys
+"""
 import os
+import sys
+from typing import Any
+from typing import Callable
+
 import ntptime
+import uasyncio
+import ujson
+
+import rockwren.accesspoint as accesspoint
+import rockwren.env as rockwren_env
+import rockwren.mqtt_client as mqtt_client
 import rockwren.networking as networking
 import rockwren.web as web
-import rockwren.accesspoint as accesspoint
-import rockwren.mqtt_client as mqtt_client
-import rockwren.env as rockwren_env
 from phew import server
 from rockwren.mqtt_client import MqttDevice
-import ujson
 
 
 class Device:
+    """
+    Device represents the specific behaviour of the device to be implemented.
+    This class is extended to implement the logic to send a discovery message
+    to home assistant, handle mqtt commands, send mqtt status updates, change
+    device state and so on.
+    """
 
     def __init__(self, name="RockwrenDevice", device_type="light"):
         self.name = name
@@ -37,65 +49,88 @@ class Device:
         """
         self.apply_state()
 
-    def json(self):
+    def json(self) -> str:
+        """
+        Return a json representation of the device encoded as a str. Used by `mqtt_client` to publish
+        frequent state updates to the MQTT server. Overridden for each device that has more capability than on or off.
+        :return: device state as json
+        """
         return ujson.dumps({'state': self.state})
 
     def on(self):
+        """ Update the device state to ON.  Override or extend when needed.
+        If overridden, self.apply_state() must be called. """
         self.state = "ON"
         self.apply_state()
 
     def off(self):
+        """ Update the device state to OFF.  Override or extend when needed.
+        If overridden, self.apply_state() must be called. """
         self.state = "OFF"
         self.apply_state()
 
     def toggle(self):
+        """ Update the device state by toggling.  Override or extend when needed.
+        If overridden, self.apply_state() must be called. """
         if self.is_on():
             self.off()
         else:
             self.on()
 
-    def is_on(self):
-        if self.state == "ON":
-            return True
-        else:
-            return False
+    def is_on(self) -> bool:
+        """
+        Check if the device is in the ON state. Override or extend when needed.
+        :return: True if device is on, False if the device is off.
+        """
+        return self.state == "ON"
 
     def apply_state(self):
         """
         Apply the state of the device on change and notify listeners
-        The implementation must call ``super.apply_state()`` last
+        The implementation must call ``super.apply_state()`` last.
         """
         self.notify_listeners()
 
-    def notify_listeners(self):
+    def notify_listeners(self) -> None:
         """
-        notify all registered listeners of a change of state of the device
-        :return:
+        Notify all registered listeners of a change of state of the device.
+        Listeners are registered using ``Device.register_listener(func).``
         """
-        for f in self.listeners:
-            f()
+        for listener in self.listeners:
+            listener()
 
-    def register_listener(self, f):
+    def register_listener(self, func: Callable[[], Any]) -> None:
         """
-        Register state change listener functions
-        :param f: listener function
-        :return:
+        Register state change listener functions.
+        :param func: listener function
         """
-        self.listeners.append(f)
+        self.listeners.append(func)
 
-    def register_web(self, _web: server.Phew):
+    def register_web(self, _web: server.Phew) -> None:
+        """
+        Register the web server with the device.
+        :param _web: Phew web server instance
+        """
         self.web = _web
 
-    def register_mqtt_client(self, _mqtt_client: MqttDevice):
+    def register_mqtt_client(self, _mqtt_client: MqttDevice) -> None:
+        """
+        Register the ``mqtt_client``
+        :param _mqtt_client:
+        """
         self.mqtt_client = _mqtt_client
 
-    def discovery_function(self):
+    def discovery_function(self) -> Callable[[MqttDevice], str | None]:
+        """
+        The dicovery function to run for this device
+        :return: the discovery function that produces a discovery json message
+        """
         return None
 
 
 def set_global_exception(loop):
+    """ Set global exception to catch and output uncaught exceptions to aid debugging. """
     def handle_exception(loop, context):
-        import sys
         sys.print_exception(context["exception"])
         sys.exit()
     loop.set_exception_handler(handle_exception)
@@ -103,9 +138,8 @@ def set_global_exception(loop):
 
 def fly(the_device: Device):
     """
-    Convenience method to start are device with default web and mqtt configuration
-    :param device: device implementation
-    :return:
+    Convenience method to start a device with web and mqtt capabilities.
+    :param the_device: device implementation
     """
 
     web.device = the_device
@@ -116,26 +150,26 @@ def fly(the_device: Device):
     networking.load_network_config()
 
     # Initial wifi setup via access point
-    if rockwren_env.ssid == '':
+    if rockwren_env.SSID == '':
         try:
             set_global_exception()
             accesspoint.start_ap()
-        except Exception as e:
-            print(e)
+        except Exception as ex:
+            print(ex)
         finally:
             sys.exit()
 
     # Normal operation with Wifi setup
     try:
         set_global_exception(uasyncio.get_event_loop())
-        rockwren_env.connection_params = networking.connect()
+        rockwren_env.CONNECTION_PARAMS = networking.connect()
 
         ntptime.settime()
 
-        client = mqtt_client.MqttDevice(the_device, rockwren_env.mqtt_server, rockwren_env.connection_params,
+        client = mqtt_client.MqttDevice(the_device, rockwren_env.MQTT_SERVER, rockwren_env.CONNECTION_PARAMS,
                                         discovery_function=the_device.discovery_function(),
                                         command_handler=the_device.command_handler,
-                                        mqtt_port=int(rockwren_env.mqtt_port))
+                                        mqtt_port=int(rockwren_env.MQTT_PORT))
         client.run(uasyncio.get_event_loop())
 
         web.run(uasyncio.get_event_loop())
@@ -143,7 +177,7 @@ def fly(the_device: Device):
         uasyncio.get_event_loop().run_forever()
     except KeyboardInterrupt:
         print('Keyboard interrupt at loop level.')
-    except Exception as e:
-        sys.print_exception(e)
+    except Exception as ex:
+        sys.print_exception(ex)
         uasyncio.new_event_loop()  # Clear retained state
         # machine.reset()

@@ -1,12 +1,10 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-
 import unittest
 
-import ujson
-
 import jsondb
+import ujson
 
 
 class TestJsonDbMethods(unittest.TestCase):

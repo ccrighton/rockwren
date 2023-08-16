@@ -1,13 +1,13 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-
-from pypi_json import PyPIJSON
+import os
+import tarfile
+from pathlib import Path
 from pprint import pprint
 from urllib.request import urlretrieve
-import tarfile
-import os
-from pathlib import Path
+
+from pypi_json import PyPIJSON
 
 
 def tar_members_stripped(tar, levels_stripped=1):
@@ -30,7 +30,6 @@ def download_and_extract(package_name):
         pprint(pkg)
         filename = pkg['filename']
         url = pkg['url']
-
 
     package_filename = 'deploy/' + filename
 
