@@ -1,12 +1,13 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-
-from machine import Pin
-from rockwren import rockwren
-from rockwren import mqtt_client
-import uasyncio
 import time
+
+import uasyncio
+from machine import Pin
+
+from rockwren import mqtt_client
+from rockwren import rockwren
 
 interrupt_flag = uasyncio.ThreadSafeFlag()
 
@@ -79,5 +80,6 @@ def pico_switch_discovery(mqtt_client: mqtt_client.MqttDevice):
                 "configuration_url": f"http://{mqtt_client.connection_params['ip_address']}/"
             }
             }
+
 
 rockwren.fly(PicoWSwitch())

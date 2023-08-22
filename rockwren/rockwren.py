@@ -30,7 +30,7 @@ class Device:
     device state and so on.
     """
 
-    def __init__(self, name="RockwrenDevice", device_type="light"):
+    def __init__(self, name="RockwrenDevice", device_type=b"light"):
         self.name = name
         self.device_type = device_type
         self.state = "OFF"
@@ -99,7 +99,7 @@ class Device:
         for listener in self.listeners:
             listener()
 
-    def register_listener(self, func: Callable[[], Any]) -> None:
+    def register_listener(self, func) -> None:
         """
         Register state change listener functions.
         :param func: listener function

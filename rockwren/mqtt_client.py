@@ -39,9 +39,9 @@ class MqttDevice:
     - https://www.home-assistant.io/integrations/switch.mqtt/
     """
 
-    def __init__(self, device: rockwren.Device, mqtt_server, connection_params, state_topic="/state",
-                 command_topic="/command", availability_topic="/LWT", command_handler=noop_topic_handler,
-                 mqtt_port=0, client_id="rockwren", discovery_function=None):
+    def __init__(self, device: rockwren.Device, mqtt_server, connection_params, state_topic=b"/state",
+                 command_topic=b"/command", availability_topic=b"/LWT", command_handler=noop_topic_handler,
+                 mqtt_port=0, client_id=b"rockwren", discovery_function=None):
         self.device = device  # Switch, light etc.
         # Register mqtt_publish_state as the listener for changes in state of the device
         self.device.register_listener(self.mqtt_publish_state)
@@ -50,10 +50,10 @@ class MqttDevice:
         self.connection_params = connection_params
 
         self.client_id = client_id
-        self.unique_id = ubinascii.hexlify(machine.unique_id()).decode()
-        self.device_id = self.client_id + "_" + self.unique_id
+        self.unique_id = ubinascii.hexlify(machine.unique_id())
+        self.device_id = self.client_id + b"_" + self.unique_id
 
-        self.device_topic = self.client_id + '/' + self.unique_id
+        self.device_topic = self.client_id + b'/' + self.unique_id
         self._topic_handlers = {}
         self.state_topic = self.device_topic + state_topic
         self.command_topic = self.device_topic + command_topic
@@ -75,7 +75,7 @@ class MqttDevice:
 
     def subscription_callback(self, topic, msg, retained, duplicate):
         """ Received messages from subscribed topics will be delivered to this callback """
-        topic = topic.decode()
+        topic = topic
         if topic not in self._topic_handlers.keys():
             # Not a registered command topic
             return
@@ -89,7 +89,7 @@ class MqttDevice:
         except Exception:
             print(f"Unknown message {topic} {msg.decode()}")
 
-    def register_topic_handler(self, topic_suffix: str, topic_handler: Callable[[str, str], None]) -> None:
+    def register_topic_handler(self, topic_suffix: bytes, topic_handler) -> None:
         """
         :param topic_suffix: Suffix to associate with the topic_handler function
         :param topic_handler:  Topic handler function
@@ -118,12 +118,12 @@ class MqttDevice:
                           "server_side": False}
             require_ssl = True
 
-        self._mqtt_client = MQTTClient(self.device_id.encode(), self.mqtt_server.encode(),
+        self._mqtt_client = MQTTClient(self.device_id, self.mqtt_server,
                                        port=self.mqtt_port, keepalive=env.MQTT_KEEPALIVE,
                                        ssl=require_ssl, ssl_params=ssl_params)
         self._mqtt_client.DEBUG = True
 
-        self._mqtt_client.set_last_will(self.availability_topic.encode(), b'offline', retain=True)
+        self._mqtt_client.set_last_will(self.availability_topic, b'offline', retain=True)
         self._mqtt_client.connect()
 
         uasyncio.create_task(self.ensure_connection())
@@ -131,8 +131,8 @@ class MqttDevice:
 
         self._mqtt_client.set_callback(self.subscription_callback)
 
-        self._mqtt_client.subscribe(self.device_topic.encode() + b'/#')
-        self._mqtt_client.publish(self.availability_topic.encode(), b'online', retain=True)
+        self._mqtt_client.subscribe(self.device_topic + b'/#')
+        self._mqtt_client.publish(self.availability_topic, b'online', retain=True)
         print(f"Connected to MQTT  Broker :: {self.mqtt_server}, and waiting for callback function to be called.")
         self.send_discovery_msgs()
 
@@ -150,17 +150,17 @@ class MqttDevice:
                     except Exception as ex:
                         sys.print_exception(ex)
                 # Publish availability status and resubscribe on reconnection
-                self._mqtt_client.publish(self.availability_topic.encode(), b'online', retain=True)
+                self._mqtt_client.publish(self.availability_topic, b'online', retain=True)
                 self._mqtt_client.resubscribe()
             await uasyncio.sleep(1)
 
     def mqtt_publish_state(self) -> None:
         """ Publish the current device state on the state topic to the mqtt server """
         print(f"mqtt: {self.state_topic} {self.device.json()}")
-        self._mqtt_client.publish(self.state_topic.encode(), self.device.json())
+        self._mqtt_client.publish(self.state_topic, self.device.json())
         self._status_reported = True
 
-    def register_discovery_function(self, device_type, func):
+    def register_discovery_function(self, device_type: bytes, func):
         """
         Register functions that produce discovery message objects.  Used for devices that require more than on
         discovery message.
@@ -173,8 +173,8 @@ class MqttDevice:
     def send_discovery_msgs(self):
         """ Send all registered discovery messages for the device. """
         for device_type, discovery_function in self._discovery_functions.items():
-            discovery_topic = "homeassistant/" + device_type + "/" + self.device_id + "/config"
-            self._mqtt_client.publish(discovery_topic.encode(), ujson.dumps(discovery_function(self)))
+            discovery_topic = b"homeassistant/" + device_type + b"/" + self.device_id + b"/config"
+            self._mqtt_client.publish(discovery_topic, ujson.dumps(discovery_function(self)))
             print(f"Sending discovery message with topic {discovery_topic}")
 
     async def _mqtt_command_handler(self) -> None:

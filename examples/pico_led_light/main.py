@@ -1,9 +1,8 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-
-import ujson
 from machine import Pin
+
 from rockwren import rockwren
 
 
@@ -11,7 +10,7 @@ class PicoWLED(rockwren.Device):
 
     def __init__(self):
         self.led = Pin("LED", Pin.OUT)
-        super().__init__(name="PicoWLED", device_type="light")  # Always call last
+        super().__init__(name="PicoWLED", device_type=b"light")  # Always call last
 
     def apply_state(self):
 

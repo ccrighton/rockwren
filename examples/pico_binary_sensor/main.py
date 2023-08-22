@@ -1,13 +1,14 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+import time
 
+import uasyncio
 import ujson
 from machine import Pin
-from rockwren import rockwren
+
 from rockwren import mqtt_client
-import uasyncio
-import time
+from rockwren import rockwren
 
 interrupt_flag = uasyncio.ThreadSafeFlag()
 
@@ -24,7 +25,7 @@ class PicoWSwitch(rockwren.Device):
         uasyncio.create_task(self.switch_interrupt_handler())
 
         self.led = Pin("LED", Pin.OUT)
-        super().__init__(name="PicoWSwitch", device_type="switch")  # Always call last
+        super().__init__(name="PicoWSwitch", device_type=b"switch")  # Always call last
 
     def apply_state(self):
 
@@ -80,5 +81,6 @@ def pico_switch_discovery(mqtt_client: mqtt_client.MqttDevice):
                 "configuration_url": f"http://{mqtt_client.connection_params['ip_address']}/"
             }
             }
+
 
 rockwren.fly(PicoWSwitch())
