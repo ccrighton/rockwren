@@ -39,7 +39,7 @@ def wifi_setup(request):
     network_list = scan_networks(ap)
 
     print(network_list)
-    return template.render_template(dir_path + "wifi_setup.html",
+    return template.render_template(dir_path + "/wifi_setup.html",
                                     web_path=dir_path,
                                     networks=network_list,
                                     error="")
