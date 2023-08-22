@@ -149,10 +149,10 @@ def fly(the_device: Device):
     # Initial wifi setup via access point
     if rockwren_env.SSID == '':
         try:
-            set_global_exception()
+            set_global_exception(uasyncio.get_event_loop())
             accesspoint.start_ap()
         except Exception as ex:
-            print(ex)
+            sys.print_exception(ex)
         finally:
             sys.exit()
 

@@ -4,6 +4,7 @@
 """
 Network connectivity methods
 """
+import sys
 from socket import socket
 from time import sleep
 
@@ -85,11 +86,11 @@ def load_network_config():
     try:
         database = jsondb.JsonDB(ENV_FILE)
         database.load()
-        if database[FIRST_BOOT_KEY] is None:
+        if database.get(FIRST_BOOT_KEY) is None:
             database[FIRST_BOOT_KEY] = False
-        if database[SSID_KEY] is None:
+        if database.get(SSID_KEY) is None:
             database[SSID_KEY] = ""
-        if database[PASSWORD_KEY] is None:
+        if database.get(PASSWORD_KEY) is None:
             database[PASSWORD_KEY] = ""
         database.save()
         env.FIRST_BOOT = database[FIRST_BOOT_KEY]
@@ -106,13 +107,14 @@ def load_network_config():
         try:
             env.MQTT_CLIENT_CERT = database["mqtt_client_cert"]
         except Exception:
-            print("mqtt_port not set using default")
+            print("mqtt_client_cert not set using default")
         try:
             env.MQTT_CLIENT_KEY = database["mqtt_client_key"]
         except Exception:
-            print("mqtt_port not set using default")
+            print("mqtt_client_key not set using default")
     except Exception as ex:
-        print("Exception loading network config: " + ex)
+        print("Exception loading network config: ")
+        sys.print_exception(ex)
 
 
 def save_network_config(ssid: str, password: str):
@@ -124,7 +126,8 @@ def save_network_config(ssid: str, password: str):
         database[PASSWORD_KEY] = password
         database.save()
     except Exception as ex:
-        print("Exception saving network config: " + ex)
+        print("Exception saving network config: ")
+        sys.print_exception(ex)
 
 
 def save_network_config_key(key: str, value) -> None:
@@ -139,7 +142,8 @@ def save_network_config_key(key: str, value) -> None:
         database[key] = value
         database.save()
     except Exception as ex:
-        print("Exception saving network config: " + ex)
+        print("Exception saving network config: ")
+        sys.print_exception(ex)
 
 
 def clear_first_boot() -> None:
@@ -154,6 +158,6 @@ def first_boot_present() -> bool:
     """ :returns True if first boot present otherwise False """
     database = jsondb.JsonDB(ENV_FILE)
     database.load()
-    result = database[FIRST_BOOT_KEY] is not None and database[FIRST_BOOT_KEY]
+    result = database.get(FIRST_BOOT_KEY) is not None and database[FIRST_BOOT_KEY]
     database.save()
     return result
