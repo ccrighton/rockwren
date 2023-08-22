@@ -7,8 +7,6 @@ and command handling for a device.
 """
 import sys
 import time
-from typing import Any
-from typing import Callable
 
 import machine
 import uasyncio
@@ -96,7 +94,7 @@ class MqttDevice:
         """
         self._topic_handlers[self.device_topic + topic_suffix] = topic_handler
 
-    def pop_message(self) -> (str, str):
+    def pop_message(self):
         """ Pop the (topic, message) tuple """
         if len(self._commands) == 0:
             return None, None
@@ -211,7 +209,7 @@ class MqttDevice:
             self.mqtt_publish_state()
 
 
-def default_discovery(mqtt_client: MqttDevice) -> Any:
+def default_discovery(mqtt_client: MqttDevice):
     """ Default Home Assistant discovery message for a json based MQTT Light.
         See https://www.home-assistant.io/integrations/light.mqtt/ """
     return {"unique_id": f"{mqtt_client.device_id}_{mqtt_client.device.device_type}",

@@ -6,8 +6,6 @@
 """
 import os
 import sys
-from typing import Any
-from typing import Callable
 
 import ntptime
 import uasyncio
@@ -119,7 +117,7 @@ class Device:
         """
         self.mqtt_client = _mqtt_client
 
-    def discovery_function(self) -> Callable[[MqttDevice], str | None]:
+    def discovery_function(self):
         """
         The dicovery function to run for this device
         :return: the discovery function that produces a discovery json message
