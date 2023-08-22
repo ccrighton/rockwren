@@ -16,7 +16,7 @@ from phew import logging
 from phew import server
 from phew import template
 
-DIR_PATH = __file__[:__file__.rfind('/')]
+DIR_PATH = "/lib/rockwren"
 
 # Web application for controlling the device
 webapp = server.Phew()

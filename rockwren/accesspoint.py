@@ -20,7 +20,7 @@ from phew import server, template
 
 ap = None
 accesspointapp = server.Phew()
-dir_path = __file__[:__file__.rfind('/')]
+dir_path = "/lib/rockwren"
 
 
 def scan_networks(net: network.WLAN):
