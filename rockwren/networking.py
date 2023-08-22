@@ -10,9 +10,9 @@ from time import sleep
 import machine
 import network
 
-import rockwren.env as env
-import rockwren.jsondb as jsondb
-import rockwren.secrets as secrets
+from . import env
+from . import jsondb
+from . import secrets
 
 FIRST_BOOT_KEY = "first_boot"
 SSID_KEY = "ssid"

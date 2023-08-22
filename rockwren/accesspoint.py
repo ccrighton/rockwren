@@ -9,7 +9,7 @@ import machine
 import network
 import uasyncio
 
-import rockwren.networking as networking
+from . import networking
 
 try:
     import usocket as socket

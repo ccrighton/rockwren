@@ -13,13 +13,12 @@ import ntptime
 import uasyncio
 import ujson
 
-import rockwren.accesspoint as accesspoint
-import rockwren.env as rockwren_env
-import rockwren.mqtt_client as mqtt_client
-import rockwren.networking as networking
-import rockwren.web as web
+from . import accesspoint
+from . import env as rockwren_env
+from . import mqtt_client
+from . import networking
+from . import web
 from phew import server
-from rockwren.mqtt_client import MqttDevice
 
 
 class Device:
@@ -113,7 +112,7 @@ class Device:
         """
         self.web = _web
 
-    def register_mqtt_client(self, _mqtt_client: MqttDevice) -> None:
+    def register_mqtt_client(self, _mqtt_client: mqtt_client.MqttDevice) -> None:
         """
         Register the ``mqtt_client``
         :param _mqtt_client:

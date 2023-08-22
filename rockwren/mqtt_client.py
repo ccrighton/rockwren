@@ -16,9 +16,9 @@ import ubinascii
 import ujson
 from umqtt.robust2 import MQTTClient
 
-import rockwren.env as env
-import rockwren.rockwren as rockwren
-import rockwren.utils as utils
+from . import env
+from . import rockwren
+from . import utils
 
 
 def noop_topic_handler(topic, message):

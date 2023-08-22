@@ -8,10 +8,10 @@ import machine
 import uasyncio
 from machine import Pin
 
-import rockwren.env as env
-import rockwren.networking as networking
-import rockwren.rockwren as rockwren
-import rockwren.utils as utils
+from . import env
+from . import networking
+from . import rockwren
+from . import utils
 from phew import logging
 from phew import server
 from phew import template
