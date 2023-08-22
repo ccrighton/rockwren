@@ -10,6 +10,7 @@ from time import sleep
 
 import machine
 import network
+from micropython import const
 
 from . import env
 from . import jsondb

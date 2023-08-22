@@ -6,7 +6,7 @@ Device web interface for initial setup via access point and for configuration.
 """
 import machine
 import uasyncio
-from machine import Pin
+from micropython import const
 
 from . import env
 from . import networking
@@ -17,6 +17,8 @@ from phew import server
 from phew import template
 
 DIR_PATH = "/lib/rockwren"
+STATUS_CODE_302 = const(302)
+STATUS_CODE_404 = const(404)
 
 # Web application for controlling the device
 webapp = server.Phew()
@@ -50,7 +52,7 @@ def device_on(request):
     logging.info(f"Device: {device}")
     if device:
         device.on()
-    return server.redirect("/", status=302)
+    return server.redirect("/", status=STATUS_CODE_302)
 
 
 @webapp.route("/device/off")
@@ -59,7 +61,7 @@ def device_off(request):
     logging.info(f"Device: {device}")
     if device:
         device.off()
-    return server.redirect("/", status=302)
+    return server.redirect("/", status=STATUS_CODE_302)
 
 
 @webapp.route("/device/toggle")
@@ -67,7 +69,7 @@ def device_toggle(request):
     """ Toggle device """
     if device:
         device.toggle()
-    return server.redirect("/", status=302)
+    return server.redirect("/", status=STATUS_CODE_302)
 
 
 async def delayed_restart(delay_secs):
@@ -105,11 +107,17 @@ def favicon(request):
     return server.serve_file(DIR_PATH + "/favicon.svg")
 
 
+@webapp.route("/log", methods=["GET"])
+def favicon(request):
+    """" Serve log file """
+    return server.serve_file("/log.txt")
+
+
 @webapp.route("/mqtt_config", methods=["POST"])
 def mqtt_config_save(request):
     """ Handle MQTT configuration form post """
     if not request.form:
-        return server.redirect("/mqtt_config", status=302)
+        return server.redirect("/mqtt_config", status=STATUS_CODE_302)
 
     mqtt_config_updated = False
 
@@ -139,9 +147,9 @@ def mqtt_config_save(request):
         mqtt_config_updated = True
 
     if mqtt_config_updated:
-        return server.redirect("/restart", status=302)
+        return server.redirect("/restart", status=STATUS_CODE_302)
     else:
-        return server.redirect("/mqtt_config", status=302)
+        return server.redirect("/mqtt_config", status=STATUS_CODE_302)
 
 
 @webapp.route("/viewlogs", methods=["GET"])
@@ -160,4 +168,4 @@ def view_logs(request):
 @webapp.catchall()
 def page_not_found(request):
     """ 404 page not found """
-    return template.render_template(DIR_PATH + "/page_not_found.html", web_path=DIR_PATH), 404
+    return template.render_template(DIR_PATH + "/page_not_found.html", web_path=DIR_PATH), STATUS_CODE_404

@@ -8,6 +8,7 @@ import sys
 import machine
 import network
 import uasyncio
+from micropython import const
 
 from . import networking
 
@@ -21,6 +22,7 @@ from phew import server, template
 ap = None
 accesspointapp = server.Phew()
 dir_path = "/lib/rockwren"
+STATUS_CODE_404 = const(404)
 
 
 def scan_networks(net: network.WLAN):
@@ -92,7 +94,7 @@ def favicon(request):
 def page_not_found(request):
     """ Handle page not found. """
     return template.render_template(dir_path + "/page_not_found.html",
-                                    web_path=dir_path), 404
+                                    web_path=dir_path), STATUS_CODE_404
 
 
 async def serve_client(reader, writer):
