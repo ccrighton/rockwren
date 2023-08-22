@@ -36,7 +36,9 @@ def scan_networks(net: network.WLAN):
 @accesspointapp.route("/", methods=["GET"])
 def wifi_setup(request):
     """ Wifi Setup Home """
-    network_list = scan_networks(ap)
+    network_list = []
+    if sys.platform != 'esp8266':
+        network_list = scan_networks(ap)
 
     print(network_list)
     return template.render_template(dir_path + "/wifi_setup.html",
