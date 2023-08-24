@@ -11,13 +11,25 @@ SPDX-License-Identifier: GPL-3.0-or-later
         <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>{{render_template(web_path + "/style.css")}}</style>
+        <script>
+        function loadLogs() {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              logtext = document.getElementById("logtext")
+              logtext.innerHTML = this.responseText;
+              logtext.scrollTop = logtext.scrollHeight
+            }
+          };
+          xhttp.open("GET", "log", true);
+          xhttp.send();
+        }
+        </script>
     </head>
-    <body> <h1>Rockwren</h1>
+    <body  onload="loadLogs()"> <h1>Rockwren</h1>
         <h2>{{device.name}}</h2>
-        {{'<h3 style="color:#008000;">ON</h3>' if device.is_on() else '<h3 style="color:#FF0000;">OFF</h3>'}}
-        <p><button  class="button" onclick="window.location.href='/device/toggle';">TOGGLE</button></p>
         <h2>Logs</h2>
-        <textarea class="logtext" id="logtext" name="logtext" rows="30" cols="120">{{logtext}}</textarea>
+        <textarea class="logtext" id="logtext" name="logtext" rows="30" cols="120"></textarea>
         <p><button class="button" onclick="window.location.href='/';">Home</button></p>
     </body>
 </html>

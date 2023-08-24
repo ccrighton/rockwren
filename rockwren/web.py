@@ -144,14 +144,9 @@ def mqtt_config_save(request):
 @webapp.route("/viewlogs", methods=["GET"])
 def view_logs(request):
     """ View device logs """
-    log_text = ""
-    with open("log.txt") as log_file:
-        log_text = log_file.read()
-
     return template.render_template(DIR_PATH + "/viewlogs.html",
                                     web_path=DIR_PATH,
-                                    device=device,
-                                    logtext=log_text)
+                                    device=device)
 
 
 @webapp.catchall()
