@@ -4,6 +4,7 @@
 """
 
 """
+import gc
 import os
 import sys
 
@@ -152,6 +153,11 @@ def fly(the_device: Device):
     Convenience method to start a device with web and mqtt capabilities.
     :param the_device: device implementation
     """
+
+    gc.collect()
+
+    # GC when more than 25% of the currently free heap becomes occupied.
+    gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
 
     web.device = the_device
 
