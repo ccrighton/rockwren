@@ -24,6 +24,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
           xhttp.open("GET", "log", true);
           xhttp.send();
         }
+        setInterval(loadLogs, 5000)
         </script>
     </head>
     <body  onload="loadLogs()"> <h1>Rockwren</h1>
