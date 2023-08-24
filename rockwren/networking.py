@@ -4,6 +4,7 @@
 """
 Network connectivity methods
 """
+import io
 import sys
 from socket import socket
 from time import sleep
@@ -15,6 +16,7 @@ from micropython import const
 from . import env
 from . import jsondb
 from . import secrets
+from phew import logging
 
 FIRST_BOOT_KEY = "first_boot"
 SSID_KEY = "ssid"
@@ -35,8 +37,8 @@ def connect(hostname='rockwren'):
     wlan.connect(env.SSID, secrets.SSID_PASSWORD)
     first_boot_retries = 0
     while not wlan.isconnected():
-        print('Waiting for connection...')
-        print(wlan.status())
+        logging.info('Waiting for connection...')
+        logging.info(wlan.status())
         sleep(1)
         if env.FIRST_BOOT:
             if first_boot_retries >= 10:
@@ -49,7 +51,7 @@ def connect(hostname='rockwren'):
     clear_first_boot()
 
     ip_address, subnet_mask, gateway, dns_server = wlan.ifconfig()
-    print(f'Connected on {ip_address}')
+    logging.info(f'Connected on {ip_address}')
     return {"ip_address": ip_address, "subnet_mask": subnet_mask, "gateway": gateway, "dns_server": dns_server}
 
 
@@ -64,7 +66,7 @@ def open_socket(ip_address, port):
     connection = socket.socket()
     connection.bind(address)
     connection.listen(1)
-    print(connection)
+    logging.info(connection)
     return connection
 
 
@@ -100,22 +102,24 @@ def load_network_config():
         try:
             env.MQTT_SERVER = database["mqtt_server"]
         except Exception:
-            print("mqtt_server not set using default")
+            logging.info("mqtt_server not set using default")
         try:
             env.MQTT_PORT = database["mqtt_port"]
         except Exception:
-            print("mqtt_port not set using default")
+            logging.info("mqtt_port not set using default")
         try:
             env.MQTT_CLIENT_CERT = database["mqtt_client_cert"]
         except Exception:
-            print("mqtt_client_cert not set using default")
+            logging.info("mqtt_client_cert not set using default")
         try:
             env.MQTT_CLIENT_KEY = database["mqtt_client_key"]
         except Exception:
-            print("mqtt_client_key not set using default")
+            logging.info("mqtt_client_key not set using default")
     except Exception as ex:
-        print("Exception loading network config: ")
-        sys.print_exception(ex)
+        logging.error("Exception loading network config: ")
+        trace = io.StringIO()
+        sys.print_exception(ex, trace)
+        logging.error(trace.getvalue())
 
 
 def save_network_config(ssid: str, password: str):
@@ -127,8 +131,10 @@ def save_network_config(ssid: str, password: str):
         database[PASSWORD_KEY] = password
         database.save()
     except Exception as ex:
-        print("Exception saving network config: ")
-        sys.print_exception(ex)
+        logging.error("Exception saving network config: ")
+        trace = io.StringIO()
+        sys.print_exception(ex, trace)
+        logging.error(trace.getvalue())
 
 
 def save_network_config_key(key: str, value) -> None:
@@ -143,8 +149,10 @@ def save_network_config_key(key: str, value) -> None:
         database[key] = value
         database.save()
     except Exception as ex:
-        print("Exception saving network config: ")
-        sys.print_exception(ex)
+        logging.error("Exception saving network config: ")
+        trace = io.StringIO()
+        sys.print_exception(ex, trace)
+        logging.error(trace.getvalue())
 
 
 def clear_first_boot() -> None:

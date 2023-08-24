@@ -5,6 +5,7 @@
 MQTT device integration for Home Assistant discovery, connection, reconnection, state notification publication
 and command handling for a device.
 """
+import io
 import sys
 import time
 
@@ -17,6 +18,7 @@ from umqtt.robust2 import MQTTClient
 from . import env
 from . import rockwren
 from . import utils
+from phew import logging
 
 
 def noop_topic_handler(topic, message):
@@ -78,14 +80,14 @@ class MqttDevice:
             # Not a registered command topic
             return
         if len(self._commands) > self._max_commands:
-            print(f"Command queue full, discarding. {topic} {msg.decode()}")
+            logging.error(f"subscription_callback: Command queue full, discarding. {topic} {msg.decode()}")
             return
         try:
             decoded_msg = ujson.loads(msg)
             # Push the (topic, message) tuple
             self._commands.append((topic, decoded_msg))
         except Exception:
-            print(f"Unknown message {topic} {msg.decode()}")
+            logging.error(f"subscription_callback: Unknown message {topic} {msg.decode()}")
 
     def register_topic_handler(self, topic_suffix: bytes, topic_handler) -> None:
         """
@@ -106,7 +108,7 @@ class MqttDevice:
         :param uasyncio_loop: asyncio loop used for the mqtt client.  The mqtt client, reconnection handler and
                               command handler are all run as co-routines for this loop.
         """
-        print(f"Begin connection with MQTT Broker :: {self.mqtt_server}:{self.mqtt_port}")
+        logging.info(f"Begin connection with MQTT Broker :: {self.mqtt_server}:{self.mqtt_port}")
         require_ssl = False
         ssl_params = None
 
@@ -131,7 +133,8 @@ class MqttDevice:
 
         self._mqtt_client.subscribe(self.device_topic + b'/#')
         self._mqtt_client.publish(self.availability_topic, b'online', retain=True)
-        print(f"Connected to MQTT  Broker :: {self.mqtt_server}, and waiting for callback function to be called.")
+        logging.info(
+            f"Connected to MQTT  Broker :: {self.mqtt_server}, and waiting for callback function to be called.")
         self.send_discovery_msgs()
 
     async def ensure_connection(self):
@@ -139,22 +142,24 @@ class MqttDevice:
         while True:
             if self._mqtt_client.is_conn_issue():
                 while self._mqtt_client.is_conn_issue():
-                    print("mqtt trying to reconnect")
+                    logging.info("mqtt trying to reconnect")
                     await uasyncio.sleep(1)
                     # If the connection is successful, the is_conn_issue
                     # method will not return a connection error.
                     try:
                         self._mqtt_client.reconnect()
                     except Exception as ex:
-                        sys.print_exception(ex)
-                # Publish availability status and resubscribe on reconnection
+                        trace = io.StringIO()
+                        sys.print_exception(ex, trace)
+                        # Publish availability status and resubscribe on reconnection
+                        logging.error(trace.getvalue())
                 self._mqtt_client.publish(self.availability_topic, b'online', retain=True)
                 self._mqtt_client.resubscribe()
             await uasyncio.sleep(1)
 
     def mqtt_publish_state(self) -> None:
         """ Publish the current device state on the state topic to the mqtt server """
-        print(f"mqtt: {self.state_topic} {self.device.json()}")
+        logging.info(f"mqtt: {self.state_topic} {self.device.json()}")
         self._mqtt_client.publish(self.state_topic, self.device.json())
         self._status_reported = True
 
@@ -173,7 +178,7 @@ class MqttDevice:
         for device_type, discovery_function in self._discovery_functions.items():
             discovery_topic = b"homeassistant/" + device_type + b"/" + self.device_id + b"/config"
             self._mqtt_client.publish(discovery_topic, ujson.dumps(discovery_function(self)))
-            print(f"Sending discovery message with topic {discovery_topic}")
+            logging.info(f"Sending discovery message with topic {discovery_topic}")
 
     async def _mqtt_command_handler(self) -> None:
         """ MQTT command handler
@@ -194,7 +199,7 @@ class MqttDevice:
             if message is None:
                 continue
 
-            print(f"mqtt_command_handler: {topic}: {message}")
+            logging.debug(f"_mqtt_command_handler: {topic}: {message}")
 
             handler = self._topic_handlers.get(topic)
 
@@ -204,7 +209,10 @@ class MqttDevice:
             try:
                 handler(topic, message)
             except Exception as ex:
-                print(f"Exception during execution of {handler.__name__} for topic {topic}: {ex}")
+                logging.error(f"Exception during execution of {handler.__name__} for topic {topic})")
+                trace = io.StringIO()
+                sys.print_exception(ex, trace)
+                logging.error(trace.getvalue())
 
             self.mqtt_publish_state()
 

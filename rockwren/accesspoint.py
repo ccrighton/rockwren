@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 """ Access Point for Device WiFi setup. """
+import io
 import os
 import sys
 
@@ -17,7 +18,7 @@ try:
 except Exception:
     import socket
 
-from phew import server, template
+from phew import server, template, logging
 
 ap = None
 accesspointapp = server.Phew()
@@ -42,7 +43,7 @@ def wifi_setup(request):
     if sys.platform != 'esp8266':
         network_list = scan_networks(ap)
 
-    print(network_list)
+    logging.debug(network_list)
     return template.render_template(dir_path + "/wifi_setup.html",
                                     web_path=dir_path,
                                     networks=network_list,
@@ -57,8 +58,8 @@ def wifi_setup_save(request):
     if ssid and password and ssid != "" and password != "":
         try:
             networking.save_network_config(ssid, password)
-        except Exception:
-            print("failed to save network config")
+        except Exception as ex:
+            logging.error("wifi_setup_save: failed to save network config")
 
         return server.redirect("/restart", status=303)
 
@@ -113,13 +114,15 @@ def start_ap():
     ap.active(True)
 
     while not ap.active():
-        print('Waiting for connection...')
-        print(ap.status())
+        logging.info('Waiting for connection...')
+        logging.info(ap.status())
 
-    print('Access point active')
-    print(ap.ifconfig())
+    logging.info('Access point active')
+    logging.info(ap.ifconfig())
 
     try:
         accesspointapp.run()
     except Exception as ex:
-        sys.print_exception(ex)
+        trace = io.StringIO()
+        sys.print_exception(ex, trace)
+        logging.error(trace.getvalue())

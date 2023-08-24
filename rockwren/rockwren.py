@@ -5,6 +5,7 @@
 
 """
 import gc
+import io
 import os
 import sys
 
@@ -17,6 +18,7 @@ from . import env as rockwren_env
 from . import mqtt_client
 from . import networking
 from . import web
+from phew import logging
 from phew import server
 
 
@@ -25,7 +27,7 @@ class Device:
     Device represents the specific behaviour of the device to be implemented.
     This class is extended to implement the logic to send a discovery message
     to home assistant, handle mqtt commands, send mqtt status updates, change
-    device state and so on.
+    device state, handle web ui state changes and so on.
     """
 
     def __init__(self, name="RockwrenDevice", device_type=b"light"):
@@ -36,6 +38,8 @@ class Device:
         self.mqtt_client = None
         self.listeners = []
         self.apply_state()
+        """ HTML template path for use for controlling the device from the web ui. """
+        self.template = None
 
     def __str__(self):
         return f"{self.name}(state={self.state})"
@@ -43,7 +47,7 @@ class Device:
     def web_post_handler(self, form):
         """ Handle web ui device control changes. Extend or override to provide handling for the
             device change post requests. """
-        print(form)
+        logging.debug(form)
         if not form:
             return "Form not provided.", 400
         if form.get("state") and form.get("state").upper() == "ON":
@@ -143,7 +147,9 @@ class Device:
 def set_global_exception(loop):
     """ Set global exception to catch and output uncaught exceptions to aid debugging. """
     def handle_exception(loop, context):
-        sys.print_exception(context["exception"])
+        trace = io.StringIO()
+        sys.print_exception(context["exception"], trace)
+        logging.error(trace.getvalue())
         sys.exit()
     loop.set_exception_handler(handle_exception)
 
@@ -162,7 +168,7 @@ def fly(the_device: Device):
     web.device = the_device
 
     stats = os.statvfs('/')
-    print(f"Free storage: {stats[0]*stats[3]/1024} KB")
+    logging.info(f"Free storage: {stats[0]*stats[3]/1024} KB")
 
     networking.load_network_config()
 
@@ -172,7 +178,9 @@ def fly(the_device: Device):
             set_global_exception(uasyncio.get_event_loop())
             accesspoint.start_ap()
         except Exception as ex:
-            sys.print_exception(ex)
+            trace = io.StringIO()
+            sys.print_exception(ex, trace)
+            logging.error(trace.getvalue())
         finally:
             sys.exit()
 
@@ -193,8 +201,10 @@ def fly(the_device: Device):
 
         uasyncio.get_event_loop().run_forever()
     except KeyboardInterrupt:
-        print('Keyboard interrupt at loop level.')
+        logging.info('Keyboard interrupt at loop level.')
     except Exception as ex:
-        sys.print_exception(ex)
+        trace = io.StringIO()
+        sys.print_exception(ex, trace)
+        logging.error(trace.getvalue())
         uasyncio.new_event_loop()  # Clear retained state
         # machine.reset()
