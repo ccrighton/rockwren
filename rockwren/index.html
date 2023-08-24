@@ -11,11 +11,37 @@ SPDX-License-Identifier: GPL-3.0-or-later
         <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>{{render_template(web_path + "/style.css")}}</style>
+        <script>
+            function deviceControl(name, value) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "/device-control", true);
+                // Send the proper header information along with the request
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = () => {
+                    // Call a function when the state changes.
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        resp = JSON.parse(xhr.responseText)
+                        console.log(resp)
+                        if (resp.state) {
+                            state = document.getElementById("device-state")
+                            state.innerHTML = resp.state;
+                            if (resp.state == "ON") {
+                                state.style.color = "#008000"
+                            } else {
+                                state.style.color = "#FF0000"
+                            }
+                        }
+                    }
+                };
+                xhr.send(name + "=" + value);
+            }
+        </script>
     </head>
     <body> <h1>Rockwren</h1>
         <h2>{{device.name}}</h2>
-        {{'<h3 style="color:#008000;">ON</h3>' if device.is_on() else '<h3 style="color:#FF0000;">OFF</h3>'}}
-        <p><button  class="button" onclick="window.location.href='/device/toggle';">TOGGLE</button></p>
+        {{'<h3 id="device-state" style="color:#008000;">ON</h3>' if device.is_on() else '<h3 id="device-state" style="color:#FF0000;">OFF</h3>'}}
+        <p><button  class="button" onclick="deviceControl('command', 'toggle')">TOGGLE</button></p>
+        {{"" if not device.template else render_template(device.template)}}
         <table class="center">
         <h2>Configuration</h2>
         <table id="configtable">

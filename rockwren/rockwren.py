@@ -39,6 +39,20 @@ class Device:
     def __str__(self):
         return f"{self.name}(state={self.state})"
 
+    def web_post_handler(self, form):
+        """ Handle web ui device control changes. Extend or override to provide handling for the
+            device change post requests. """
+        print(form)
+        if not form:
+            return "Form not provided.", 400
+        if form.get("state") and form.get("state").upper() == "ON":
+            self.on()
+        elif form.get("state") and form.get("state").upper() == "OFF":
+            self.off()
+        elif form.get("command") and form.get("command").upper() == "TOGGLE":
+            self.toggle()
+        return self.json(), 200
+
     def command_handler(self, topic, message):
         """
         Apply the state of the device on change and notify listeners

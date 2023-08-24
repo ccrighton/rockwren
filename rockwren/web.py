@@ -17,7 +17,9 @@ from phew import server
 from phew import template
 
 DIR_PATH = "/lib/rockwren"
+STATUS_CODE_200 = const(200)
 STATUS_CODE_302 = const(302)
+STATUS_CODE_400 = const(400)
 STATUS_CODE_404 = const(404)
 
 # Web application for controlling the device
@@ -46,30 +48,17 @@ def index(request):
                                     mqtt_port=env.MQTT_PORT)
 
 
-@webapp.route("/device/on")
-def device_on(request):
-    """ Turn device on """
+@webapp.route("/device-control", methods=["POST"])
+def device_control(request):
+    """ Handle device control messages """
     logging.info(f"Device: {device}")
+
+    if not request.form:
+        return "Bad request", STATUS_CODE_400
     if device:
-        device.on()
-    return server.redirect("/", status=STATUS_CODE_302)
-
-
-@webapp.route("/device/off")
-def device_off(request):
-    """ Turn device off """
-    logging.info(f"Device: {device}")
-    if device:
-        device.off()
-    return server.redirect("/", status=STATUS_CODE_302)
-
-
-@webapp.route("/device/toggle")
-def device_toggle(request):
-    """ Toggle device """
-    if device:
-        device.toggle()
-    return server.redirect("/", status=STATUS_CODE_302)
+        resp, status = device.web_post_handler(request.form)
+        return resp, status
+    return "Device not found", STATUS_CODE_400
 
 
 async def delayed_restart(delay_secs):
