@@ -39,26 +39,36 @@ def index(request):
     """ Home page """
     return template.render_template(DIR_PATH + "/index.html",
                                     web_path=DIR_PATH,
-                                    device=device,
-                                    ip_address=env.CONNECTION_PARAMS["ip_address"],
-                                    subnet_mask=env.CONNECTION_PARAMS["subnet_mask"],
-                                    gateway=env.CONNECTION_PARAMS["gateway"],
-                                    dns_server=env.CONNECTION_PARAMS["dns_server"],
-                                    mqtt_server=env.MQTT_SERVER,
-                                    mqtt_port=env.MQTT_PORT)
+                                    device=device)
 
 
-@webapp.route("/device-control", methods=["POST"])
+@webapp.route("/device", methods=["GET"])
+def device_control(request):
+    """ Return json formatted information about the device """
+    if device:
+        return server.Response(device.information(), 200, {"Content-Type": "application/json"})
+    return "Device not found", STATUS_CODE_400
+
+
+@webapp.route("/device/control", methods=["POST"])
 def device_control(request):
     """ Handle device control messages """
-    logging.info(f"Device: {device}")
 
     if not request.form:
-        return "Bad request", STATUS_CODE_400
+        return server.Response('{"error": "Bad request"}', STATUS_CODE_400, {"Content-Type": "application/json"})
     if device:
         resp, status = device.web_post_handler(request.form)
-        return resp, status
-    return "Device not found", STATUS_CODE_400
+        return server.Response(resp, status, {"Content-Type": "application/json"})
+    return server.Response('{"error": "Device not found"}', STATUS_CODE_400, {"Content-Type": "application/json"})
+
+
+@webapp.route("/device/state", methods=["GET"])
+def device_state(request):
+    """ Get device state """
+
+    if device:
+        return server.Response(device.device_state(), STATUS_CODE_200, {"Content-Type": "application/json"})
+    return server.Response('{"error": "Device not found"}', STATUS_CODE_400, {"Content-Type": "application/json"})
 
 
 async def delayed_restart(delay_secs):
@@ -147,6 +157,20 @@ def view_logs(request):
     return template.render_template(DIR_PATH + "/viewlogs.html",
                                     web_path=DIR_PATH,
                                     device=device)
+
+
+@webapp.route("/information", methods=["GET"])
+def view_logs(request):
+    """ View device information """
+    return template.render_template(DIR_PATH + "/information.html",
+                                    web_path=DIR_PATH,
+                                    device=device,
+                                    ip_address=env.CONNECTION_PARAMS["ip_address"],
+                                    subnet_mask=env.CONNECTION_PARAMS["subnet_mask"],
+                                    gateway=env.CONNECTION_PARAMS["gateway"],
+                                    dns_server=env.CONNECTION_PARAMS["dns_server"],
+                                    mqtt_server=env.MQTT_SERVER,
+                                    mqtt_port=env.MQTT_PORT)
 
 
 @webapp.catchall()

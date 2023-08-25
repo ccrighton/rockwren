@@ -1,0 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+{{'<h3 id="device-state" style="color:#008000;">ON</h3>' if device.is_on() else '<h3 id="device-state" style="color:#FF0000;">OFF</h3>'}}
+<p><button  class="button" onclick="deviceControl('toggle', 'true')">TOGGLE</button></p>

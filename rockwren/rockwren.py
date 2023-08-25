@@ -9,8 +9,10 @@ import io
 import os
 import sys
 
+import machine
 import ntptime
 import uasyncio
+import ubinascii
 import ujson
 
 from . import accesspoint
@@ -35,11 +37,11 @@ class Device:
         self.device_type = device_type
         self.state = "OFF"
         self.web = None
-        self.mqtt_client = None
+        self.mqtt_client: mqtt_client.MqttDevice = None
         self.listeners = []
         self.apply_state()
         """ HTML template path for use for controlling the device from the web ui. """
-        self.template = None
+        self.template = "/lib/rockwren/controls.html"
 
     def __str__(self):
         return f"{self.name}(state={self.state})"
@@ -54,9 +56,10 @@ class Device:
             self.on()
         elif form.get("state") and form.get("state").upper() == "OFF":
             self.off()
-        elif form.get("command") and form.get("command").upper() == "TOGGLE":
+        elif form.get("toggle"):
+            """ Ignore value """
             self.toggle()
-        return self.json(), 200
+        return self.device_state(), 200
 
     def command_handler(self, topic, message):
         """
@@ -65,13 +68,45 @@ class Device:
         """
         self.apply_state()
 
-    def json(self) -> str:
+    def device_state(self) -> str:
         """
         Return a json representation of the device encoded as a str. Used by `mqtt_client` to publish
         frequent state updates to the MQTT server. Overridden for each device that has more capability than on or off.
         :return: device state as json
         """
         return ujson.dumps({'state': self.state})
+
+    def information(self) -> str:
+        """
+        Return a json representation of the device information encoded as a str. Extended or overridden for each device
+        that has additional information.  Normally, best practice is to extended: get the information dictionary
+        from this function then add to it to provide addition information.
+        :return: device state as json
+        """
+        return ujson.dumps({'device': {
+            'name': self.name,
+            'type': self.device_type,
+            'rockwren_version': '1.0.0',
+            'unique_id': ubinascii.hexlify(machine.unique_id()),
+            'platform': sys.platform,
+            'python_version': sys.version,
+            'implementation': str(sys.implementation),
+        },
+            'mqtt': {
+            'server': rockwren_env.MQTT_SERVER,
+            'port': rockwren_env.MQTT_PORT,
+            'command-topic': self.mqtt_client.command_topic,
+            'availability-topic': self.mqtt_client.availability_topic,
+            'state-topic': self.mqtt_client.state_topic,
+        },
+            'network': {
+            'ssid': rockwren_env.SSID,
+            'ip_address': rockwren_env.CONNECTION_PARAMS.get("ip_address"),
+            'subnet_mask': rockwren_env.CONNECTION_PARAMS.get("subnet_mask"),
+            'gateway': rockwren_env.CONNECTION_PARAMS.get("gateway"),
+            'dns_server': rockwren_env.CONNECTION_PARAMS["dns_server"],
+        }
+        })
 
     def on(self):
         """ Update the device state to ON.  Override or extend when needed.
@@ -159,52 +194,53 @@ def fly(the_device: Device):
     Convenience method to start a device with web and mqtt capabilities.
     :param the_device: device implementation
     """
+    while True:
+        gc.collect()
 
-    gc.collect()
+        # GC when more than 25% of the currently free heap becomes occupied.
+        gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
 
-    # GC when more than 25% of the currently free heap becomes occupied.
-    gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
+        web.device = the_device
 
-    web.device = the_device
+        stats = os.statvfs('/')
+        logging.info(f"Free storage: {stats[0]*stats[3]/1024} KB")
 
-    stats = os.statvfs('/')
-    logging.info(f"Free storage: {stats[0]*stats[3]/1024} KB")
+        networking.load_network_config()
 
-    networking.load_network_config()
+        # Initial wifi setup via access point
+        if rockwren_env.SSID == '':
+            try:
+                set_global_exception(uasyncio.get_event_loop())
+                accesspoint.start_ap()
+            except Exception as ex:
+                trace = io.StringIO()
+                sys.print_exception(ex, trace)
+                logging.error(trace.getvalue())
+            finally:
+                sys.exit()
 
-    # Initial wifi setup via access point
-    if rockwren_env.SSID == '':
+        # Normal operation with Wifi setup
         try:
             set_global_exception(uasyncio.get_event_loop())
-            accesspoint.start_ap()
+            rockwren_env.CONNECTION_PARAMS = networking.connect()
+
+            ntptime.settime()
+
+            client = mqtt_client.MqttDevice(the_device, rockwren_env.MQTT_SERVER, rockwren_env.CONNECTION_PARAMS,
+                                            discovery_function=the_device.discovery_function(),
+                                            command_handler=the_device.command_handler,
+                                            mqtt_port=int(rockwren_env.MQTT_PORT))
+            client.run(uasyncio.get_event_loop())
+
+            web.run(uasyncio.get_event_loop())
+
+            uasyncio.get_event_loop().run_forever()
+        except KeyboardInterrupt:
+            logging.info('Keyboard interrupt at loop level.')
+            break
         except Exception as ex:
             trace = io.StringIO()
             sys.print_exception(ex, trace)
             logging.error(trace.getvalue())
-        finally:
-            sys.exit()
-
-    # Normal operation with Wifi setup
-    try:
-        set_global_exception(uasyncio.get_event_loop())
-        rockwren_env.CONNECTION_PARAMS = networking.connect()
-
-        ntptime.settime()
-
-        client = mqtt_client.MqttDevice(the_device, rockwren_env.MQTT_SERVER, rockwren_env.CONNECTION_PARAMS,
-                                        discovery_function=the_device.discovery_function(),
-                                        command_handler=the_device.command_handler,
-                                        mqtt_port=int(rockwren_env.MQTT_PORT))
-        client.run(uasyncio.get_event_loop())
-
-        web.run(uasyncio.get_event_loop())
-
-        uasyncio.get_event_loop().run_forever()
-    except KeyboardInterrupt:
-        logging.info('Keyboard interrupt at loop level.')
-    except Exception as ex:
-        trace = io.StringIO()
-        sys.print_exception(ex, trace)
-        logging.error(trace.getvalue())
-        uasyncio.new_event_loop()  # Clear retained state
-        # machine.reset()
+            uasyncio.new_event_loop()  # Clear retained state
+            # machine.reset()

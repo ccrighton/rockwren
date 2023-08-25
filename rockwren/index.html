@@ -14,7 +14,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
         <script>
             function deviceControl(name, value) {
                 const xhr = new XMLHttpRequest();
-                xhr.open("POST", "/device-control", true);
+                xhr.open("POST", "/device/control", true);
                 // Send the proper header information along with the request
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = () => {
@@ -39,19 +39,10 @@ SPDX-License-Identifier: GPL-3.0-or-later
     </head>
     <body> <h1>Rockwren</h1>
         <h2>{{device.name}}</h2>
-        {{'<h3 id="device-state" style="color:#008000;">ON</h3>' if device.is_on() else '<h3 id="device-state" style="color:#FF0000;">OFF</h3>'}}
-        <p><button  class="button" onclick="deviceControl('command', 'toggle')">TOGGLE</button></p>
-        {{"" if not device.template else render_template(device.template)}}
+        {{"<p>No controls available</p>" if not device.template else render_template(device.template,device=device)}}
         <table class="center">
-        <h2>Configuration</h2>
-        <table id="configtable">
-        <tr><td class="cell-highlight">IP Address:</td><td>{{ip_address}}</td></tr>
-        <tr><td class="cell-highlight">Subnet Mask:</td><td>{{subnet_mask}}</td></tr>
-        <tr><td class="cell-highlight">Gateway:</td><td>{{gateway}}</td></tr>
-        <tr><td class="cell-highlight">DNS Server:</td><td>{{dns_server}}</td></tr>
-        <tr><td class="cell-highlight">MQTT Server:</td><td>{{mqtt_server}}</td></tr>
-        </table>
         <p><button class="button" onclick="window.location.href='/mqtt_config';">MQTT Configuration</button></p>
         <p><button class="button" onclick="window.location.href='/viewlogs';">View Logs</button></p>
+        <p><button class="button" onclick="window.location.href='/information';">Device Information</button></p>
     </body>
 </html>

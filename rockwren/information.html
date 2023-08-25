@@ -1,0 +1,41 @@
+<!--
+SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rockwren</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>{{render_template(web_path + "/style.css")}}</style>
+        <script>
+        function loadInformation() {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              info = document.getElementById("info")
+              info.innerHTML = JSON.stringify(JSON.parse(this.responseText), undefined, 4);
+            }
+          };
+          xhttp.open("GET", "device", true);
+          xhttp.send();
+        }
+        </script>
+    </head>
+    <body  onload="loadInformation()"> <h1>Rockwren</h1>
+        <h2>{{device.name}}</h2>
+        <h2>Device Information</h2>
+        <table id="configtable">
+        <tr><td class="cell-highlight">IP Address:</td><td>{{ip_address}}</td></tr>
+        <tr><td class="cell-highlight">Subnet Mask:</td><td>{{subnet_mask}}</td></tr>
+        <tr><td class="cell-highlight">Gateway:</td><td>{{gateway}}</td></tr>
+        <tr><td class="cell-highlight">DNS Server:</td><td>{{dns_server}}</td></tr>
+        <tr><td class="cell-highlight">MQTT Server:</td><td>{{mqtt_server}}</td></tr>
+        </table>
+        <textarea class="logtext" id="info" name="info" rows="30" cols="120"></textarea>
+        <p><button class="button" onclick="window.location.href='/';">Home</button></p>
+    </body>
+</html>

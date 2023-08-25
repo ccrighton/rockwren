@@ -43,6 +43,8 @@ class MqttDevice:
                  command_topic=b"/command", availability_topic=b"/LWT", command_handler=noop_topic_handler,
                  mqtt_port=0, client_id=b"rockwren", discovery_function=None):
         self.device = device  # Switch, light etc.
+        # Register this client with the device
+        self.device.register_mqtt_client(self)
         # Register mqtt_publish_state as the listener for changes in state of the device
         self.device.register_listener(self.mqtt_publish_state)
         self.mqtt_server = mqtt_server
@@ -159,8 +161,8 @@ class MqttDevice:
 
     def mqtt_publish_state(self) -> None:
         """ Publish the current device state on the state topic to the mqtt server """
-        logging.info(f"mqtt: {self.state_topic} {self.device.json()}")
-        self._mqtt_client.publish(self.state_topic, self.device.json())
+        logging.info(f"mqtt: {self.state_topic} {self.device.device_state()}")
+        self._mqtt_client.publish(self.state_topic, self.device.device_state())
         self._status_reported = True
 
     def register_discovery_function(self, device_type: bytes, func):
