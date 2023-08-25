@@ -10,7 +10,7 @@ class Esp8266LED(rockwren.Device):
 
     def __init__(self):
         self.led = Pin(2, Pin.OUT)
-        self.template = "/lib/rockwren/controls.html"
+        self.template = "/controls.html"
         super().__init__(name="ESP8266LED", device_type=b"light")  # Always call last
 
     def apply_state(self):
