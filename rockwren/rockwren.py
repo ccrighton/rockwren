@@ -142,13 +142,17 @@ class Device:
         """
         self.notify_listeners()
 
+    async def listener_task(self, listener):
+        listener()
+
     def notify_listeners(self) -> None:
         """
         Notify all registered listeners of a change of state of the device.
         Listeners are registered using ``Device.register_listener(func).``
         """
         for listener in self.listeners:
-            listener()
+            uasyncio.create_task(self.listener_task(listener))
+            await uasyncio.sleep(0)
 
     def register_listener(self, func) -> None:
         """
