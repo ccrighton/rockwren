@@ -5,3 +5,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 # Rockwren
+
+
+## Packaging
+
+. ./venv/Scripts/activate
+python -m build

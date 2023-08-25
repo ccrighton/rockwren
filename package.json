@@ -2,9 +2,11 @@
   "urls": [
     ["rockwren/__init__.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/__init__.py"],
     ["rockwren/accesspoint.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/accesspoint.py"],
+    ["rockwren/controls.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/controls.html"],
     ["rockwren/env.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/env.py"],
     ["rockwren/favicon.svg", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/favicon.svg"],
     ["rockwren/index.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/index.html"],
+    ["rockwren/information.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/information.html"],
     ["rockwren/jsondb.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/jsondb.py"],
     ["rockwren/mqtt_client.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/mqtt_client.py"],
     ["rockwren/mqtt_config.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/mqtt_config.html"],
@@ -24,5 +26,5 @@
     ["umqtt-robust2", "latest"],
     ["github:ccrighton/phew", "main"]
   ],
-  "version": "0.0.1"
+  "version": "1.0.0"
 }
