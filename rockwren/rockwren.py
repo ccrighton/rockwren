@@ -189,7 +189,7 @@ def set_global_exception(loop):
         trace = io.StringIO()
         sys.print_exception(context["exception"], trace)
         logging.error(trace.getvalue())
-        sys.exit()
+        raise context["exception"]
     loop.set_exception_handler(handle_exception)
 
 
@@ -247,4 +247,5 @@ def fly(the_device: Device):
             sys.print_exception(ex, trace)
             logging.error(trace.getvalue())
             uasyncio.new_event_loop()  # Clear retained state
-            # machine.reset()
+        finally:
+            machine.reset()
