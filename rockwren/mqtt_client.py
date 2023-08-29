@@ -153,8 +153,9 @@ class MqttDevice:
                     except Exception as ex:
                         trace = io.StringIO()
                         sys.print_exception(ex, trace)
-                        # Publish availability status and resubscribe on reconnection
-                        logging.error(trace.getvalue())
+                        utils.logstream(trace)
+
+                # Publish availability status and resubscribe on reconnection
                 self._mqtt_client.publish(self.availability_topic, b'online', retain=True)
                 self._mqtt_client.resubscribe()
             await uasyncio.sleep(1)
@@ -214,7 +215,7 @@ class MqttDevice:
                 logging.error(f"Exception during execution of {handler.__name__} for topic {topic})")
                 trace = io.StringIO()
                 sys.print_exception(ex, trace)
-                logging.error(trace.getvalue())
+                utils.logstream(trace)
 
             self.mqtt_publish_state()
 

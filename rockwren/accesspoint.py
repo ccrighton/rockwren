@@ -12,6 +12,7 @@ import uasyncio
 from micropython import const
 
 from . import networking
+from . import utils
 
 try:
     import usocket as socket
@@ -125,4 +126,4 @@ def start_ap():
     except Exception as ex:
         trace = io.StringIO()
         sys.print_exception(ex, trace)
-        logging.error(trace.getvalue())
+        utils.logstream(trace)

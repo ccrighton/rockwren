@@ -1,9 +1,12 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+import io
 import re
 
 import ubinascii
+
+from phew import logging
 
 
 def is_fqdn(hostname: str) -> bool:
@@ -39,3 +42,12 @@ def pem_to_der(pem):
     pem = ''.join(pem.split('\n')[1:-2])
     der = ubinascii.a2b_base64(pem)
     return der
+
+
+def logstream(stream: io.StringIO):
+    """ Log stream line by line to avoid allocating a large chunk of memory"""
+    while True:
+        line = stream.readline()
+        if line == '':
+            break
+        logging.error(line)

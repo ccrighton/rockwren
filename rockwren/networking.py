@@ -16,6 +16,7 @@ from micropython import const
 from . import env
 from . import jsondb
 from . import secrets
+from . import utils
 from phew import logging
 
 FIRST_BOOT_KEY = "first_boot"
@@ -119,7 +120,7 @@ def load_network_config():
         logging.error("Exception loading network config: ")
         trace = io.StringIO()
         sys.print_exception(ex, trace)
-        logging.error(trace.getvalue())
+        utils.logstream(trace)
 
 
 def save_network_config(ssid: str, password: str):
@@ -134,7 +135,7 @@ def save_network_config(ssid: str, password: str):
         logging.error("Exception saving network config: ")
         trace = io.StringIO()
         sys.print_exception(ex, trace)
-        logging.error(trace.getvalue())
+        utils.logstream(trace)
 
 
 def save_network_config_key(key: str, value) -> None:
@@ -152,7 +153,7 @@ def save_network_config_key(key: str, value) -> None:
         logging.error("Exception saving network config: ")
         trace = io.StringIO()
         sys.print_exception(ex, trace)
-        logging.error(trace.getvalue())
+        utils.logstream(trace)
 
 
 def clear_first_boot() -> None:

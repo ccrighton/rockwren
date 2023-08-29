@@ -19,6 +19,7 @@ from . import accesspoint
 from . import env as rockwren_env
 from . import mqtt_client
 from . import networking
+from . import utils
 from . import web
 from phew import logging
 from phew import server
@@ -188,7 +189,7 @@ def set_global_exception(loop):
     def handle_exception(loop, context):
         trace = io.StringIO()
         sys.print_exception(context["exception"], trace)
-        logging.error(trace.getvalue())
+        utils.logstream(trace)
         raise context["exception"]
     loop.set_exception_handler(handle_exception)
 
@@ -219,7 +220,7 @@ def fly(the_device: Device):
             except Exception as ex:
                 trace = io.StringIO()
                 sys.print_exception(ex, trace)
-                logging.error(trace.getvalue())
+                utils.logstream(trace)
             finally:
                 sys.exit()
 
@@ -243,9 +244,10 @@ def fly(the_device: Device):
             logging.info('Keyboard interrupt at loop level.')
             break
         except Exception as ex:
-            trace = io.StringIO()
-            sys.print_exception(ex, trace)
-            logging.error(trace.getvalue())
-            uasyncio.new_event_loop()  # Clear retained state
-        finally:
-            machine.reset()
+            try:
+                trace = io.StringIO()
+                sys.print_exception(ex, trace)
+                utils.logstream(trace)
+                uasyncio.new_event_loop()  # Clear retained state
+            finally:
+                machine.reset()
