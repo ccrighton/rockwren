@@ -5,9 +5,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 {{'<h3 id="device-state" style="color:#008000;">ON</h3>' if device.is_on() else '<h3 id="device-state" style="color:#FF0000;">OFF</h3>'}}
-<p><button  class="button" onclick="deviceControl('toggle', 'true')">TOGGLE</button></p>
+<p><button  class="button" id='b1' onclick="deviceControl('b1', 'toggle', 'true')">TOGGLE</button></p>
 
-<p><button  class="button" onclick="deviceControl('state', 'on')">ON</button></p>
-<p><button  class="button" onclick="deviceControl('state', 'off')">OFF</button></p>
+<p><button  class="button" id='b2' onclick="deviceControl('state', 'on')">ON</button></p>
+<p><button  class="button" id='b3' onclick="deviceControl('state', 'off')">OFF</button></p>
 <p></p>
 <hr>

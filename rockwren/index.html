@@ -12,7 +12,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>{{render_template(web_path + "/style.css")}}</style>
         <script>
-            function deviceControl(name, value) {
+            function deviceControl(button, name, value) {
                 const xhr = new XMLHttpRequest();
                 xhr.open("POST", "/device/control", true);
                 // Send the proper header information along with the request
@@ -32,8 +32,10 @@ SPDX-License-Identifier: GPL-3.0-or-later
                             }
                         }
                     }
+                    document.getElementById(button).disabled = false
                 };
                 xhr.send(name + "=" + value);
+                document.getElementById(button).disabled = true
             }
         </script>
     </head>
