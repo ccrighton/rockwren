@@ -179,6 +179,50 @@ def view_logs(request):
                                     mqtt_port=env.MQTT_PORT)
 
 
+@webapp.route("/wifi_config", methods=["GET", "POST"])
+def wifi_config(request: server.Request):
+
+    message = None
+    if request.method == "POST":
+        """ WiFI Setup handle post. """
+        ssid = request.form.get("ssid", None)
+        password = request.form.get("password", None)
+        if ssid and password and ssid != "" and password != "":
+            try:
+                networking.save_network_config(ssid, password)
+                return server.redirect("/restart", status=303)
+            except Exception as ex:
+                message = "wifi_config: failed to save network config"
+                logging.error(message)
+
+        else:
+            message = "wifi_config: Invalid network parameters"
+            logging.error(message)
+
+    network_list = []
+    if sys.platform != 'esp8266':
+        network_list = networking.scan_networks()
+
+    return template.render_template(DIR_PATH + "/wifi_config.html",
+                                    web_path=DIR_PATH,
+                                    networks=network_list,
+                                    error=message)
+
+
+async def delayed_restart(delay_secs):
+    """ Co-routine for delayed restart """
+    await uasyncio.sleep(delay_secs)
+    machine.reset()
+
+
+@webapp.route("/restart")
+def restart(request):
+    """ Restart device. """
+    if networking.first_boot_present():
+        uasyncio.create_task(delayed_restart(5))
+    return template.render_template(DIR_PATH + "/restart.html", web_path=DIR_PATH)
+
+
 @webapp.catchall()
 def page_not_found(request):
     """ 404 page not found """

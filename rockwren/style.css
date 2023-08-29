@@ -22,3 +22,10 @@ logtext { center; font-family: 'Courier New', monospace; }
 #configtable { center; margin-left: auto; margin-right: auto; text-align: left;}
 #configtable td, # configtable th { text-align: left; }
 .cell-highlight { font-weight: bold; }
+.line {
+  width: 300px;
+  height: 0;
+  border: 1px solid #C4C4C4;
+  margin: 3px;
+  display:inline-block;
+}

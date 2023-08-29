@@ -19,6 +19,7 @@
     ["rockwren/utils.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/utils.py"],
     ["rockwren/viewlogs.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/viewlogs.py"],
     ["rockwren/web.py", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/web.py"],
+    ["rockwren/wifi_config.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/wifi_config.html"],
     ["rockwren/wifi_setup.html", "https://bitbucket.org/crighton/rockwren/src/main/rockwren/wifi_setup.html"]
   ],
   "deps": [

@@ -15,9 +15,10 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <body> <h1>Rockwren</h1>
         </table>
         <h3>{{device.name()}}</h3>
-        <h3>Wifi Setup</h3>
+        </table>
+        <h3>WiFi Configuration</h3>
         <p>{{error if error else ""}}</p>
-        <form class="mqttform" action="/" method="POST">
+        <form class="mqttform" action="/wifi_config" method="POST">
           <div class="table center">
           <div class="mqttform">
           <label for="ssid">SSID:</label>
@@ -30,8 +31,10 @@ SPDX-License-Identifier: GPL-3.0-or-later
           </div>
           <input class="button" type="submit" value="Submit">
         </form>
+        <p></p>
         <table class='center'><tr><th>SSID</th><th>RSSI</th></tr>
         {{"".join([f"<tr><td>{w[0]}</td><td>{w[1]}</td></tr>\r\n" for w in networks])}}
         </table>
+        <p><button class="button" onclick="window.location.href='/';">Home</button></p>
     </body>
 </html>

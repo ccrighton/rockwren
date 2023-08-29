@@ -27,49 +27,33 @@ dir_path = "/lib/rockwren"
 STATUS_CODE_404 = const(404)
 
 
-def scan_networks(net: network.WLAN):
-    """ Scan for WiFI networks. """
-    networks = net.scan()  # list with tuples with 6 fields ssid, bssid, channel, RSSI, security, hidden
-    networks.sort(key=lambda x: x[3], reverse=True)  # sorted on RSSI (3)
-    network_list = []
-    for w in networks:
-        network_list.append((w[0].decode(), w[3]))
-    return network_list
-
-
-@accesspointapp.route("/", methods=["GET"])
+@accesspointapp.route("/", methods=["GET", "POST"])
 def wifi_setup(request):
-    """ Wifi Setup Home """
+    message = None
+    if request.method == "POST":
+        """ WiFI Setup handle post. """
+        ssid = request.form.get("ssid", None)
+        password = request.form.get("password", None)
+        if ssid and password and ssid != "" and password != "":
+            try:
+                networking.save_network_config(ssid, password)
+                return server.redirect("/restart", status=303)
+            except Exception as ex:
+                message = "wifi_config: failed to save network config"
+                logging.error(message)
+
+        else:
+            message = "wifi_config: Invalid network parameters"
+            logging.error(message)
+
     network_list = []
     if sys.platform != 'esp8266':
-        network_list = scan_networks(ap)
-
-    logging.debug(network_list)
-    return template.render_template(dir_path + "/wifi_setup.html",
-                                    web_path=dir_path,
-                                    networks=network_list,
-                                    error="")
-
-
-@accesspointapp.route("/setup", methods=["POST"])
-def wifi_setup_save(request):
-    """ WiFI Setup handle post. """
-    ssid = request.form.get("ssid", None)
-    password = request.form.get("password", None)
-    if ssid and password and ssid != "" and password != "":
-        try:
-            networking.save_network_config(ssid, password)
-        except Exception as ex:
-            logging.error("wifi_setup_save: failed to save network config")
-
-        return server.redirect("/restart", status=303)
-
-    network_list = scan_networks(ap)
+        network_list = networking.scan_networks()
 
     return template.render_template(dir_path + "/wifi_setup.html",
                                     web_path=dir_path,
                                     networks=network_list,
-                                    error="Invalid network parameters")
+                                    error=message)
 
 
 async def delayed_restart(delay_secs):

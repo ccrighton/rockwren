@@ -171,3 +171,13 @@ def first_boot_present() -> bool:
     result = database.get(FIRST_BOOT_KEY) is not None and database[FIRST_BOOT_KEY]
     database.save()
     return result
+
+
+def scan_networks(net: network.WLAN):
+    """ Scan for WiFI networks. """
+    networks = net.scan()  # list with tuples with 6 fields ssid, bssid, channel, RSSI, security, hidden
+    networks.sort(key=lambda x: x[3], reverse=True)  # sorted on RSSI (3)
+    network_list = []
+    for w in networks:
+        network_list.append((w[0].decode(), w[3]))
+    return network_list

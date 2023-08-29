@@ -42,9 +42,12 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <body> <h1>Rockwren</h1>
         <h2>{{device.name}}</h2>
         {{"<p>No controls available</p>" if not device.template else render_template(device.template,device=device)}}
+        <div class="line"></div>
         <table class="center">
+        <p><button class="button" onclick="window.location.href='/wifi_config';">WiFi Configuration</button></p>
         <p><button class="button" onclick="window.location.href='/mqtt_config';">MQTT Configuration</button></p>
         <p><button class="button" onclick="window.location.href='/viewlogs';">View Logs</button></p>
         <p><button class="button" onclick="window.location.href='/information';">Device Information</button></p>
+        </table>
     </body>
 </html>
