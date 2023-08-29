@@ -5,3 +5,4 @@
 [submodule "phew"]
 	path = phew
 	url = git@github.com:ccrighton/phew.git
+	branch = main
