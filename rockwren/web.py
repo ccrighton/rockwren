@@ -4,6 +4,9 @@
 """
 Device web interface for initial setup via access point and for configuration.
 """
+import gc
+import sys
+
 import machine
 import uasyncio
 from micropython import const
@@ -109,6 +112,9 @@ def favicon(request):
 @webapp.route("/log", methods=["GET"])
 def favicon(request):
     """" Serve log file """
+    if sys.platform == "esp8266":
+        """ Do a gc before serving file to ensure sufficient memory """
+        gc.collect()
     return server.serve_file("/log.txt")
 
 
