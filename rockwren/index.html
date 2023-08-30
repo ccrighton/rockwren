@@ -12,31 +12,58 @@ SPDX-License-Identifier: GPL-3.0-or-later
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>{{render_template(web_path + "/style.css")}}</style>
         <script>
-            function deviceControl(button, name, value) {
+            refreshRate = 2500;
+            var updateTimer;
+            var deviceState;
+            var updateCallback;
+            function registerUpdateCallback(f) {
+                updateCallback = f
+            }
+            function deviceControl(elementId, name, value) {
+                clearTimeout(updateTimer);
                 const xhr = new XMLHttpRequest();
-                xhr.open("POST", "/device/control", true);
+                if (name) {
+                    xhr.open("POST", "/device/control", true);
+                } else {
+                    xhr.open("GET", "/device/state", true);
+                }
                 // Send the proper header information along with the request
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = () => {
                     // Call a function when the state changes.
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                        resp = JSON.parse(xhr.responseText)
-                        console.log(resp)
-                        if (resp.state) {
-                            state = document.getElementById("device-state")
-                            state.innerHTML = resp.state;
-                            if (resp.state == "ON") {
-                                state.style.color = "#008000"
+                        deviceState = JSON.parse(xhr.responseText);
+                        if (updateCallback) {
+                            updateCallback()
+                        }
+                        console.log(deviceState);
+                        if (deviceState.state) {
+                            state = document.getElementById("device-state");
+                            state.innerHTML = deviceState.state;
+                            if (deviceState.state == "ON") {
+                                state.style.color = "#008000";
                             } else {
-                                state.style.color = "#FF0000"
+                                state.style.color = "#FF0000";
                             }
                         }
                     }
-                    document.getElementById(button).disabled = false
+                    if (button) {
+                        document.getElementById(button).disabled = false;
+                    }
+                    clearTimeout(updateTimer);
+                    updateTimer = setTimeout(deviceControl, refreshRate);
                 };
-                xhr.send(name + "=" + value);
-                document.getElementById(button).disabled = true
+                payload = '';
+                if (name) {
+                    payload = name + "=" + value;
+                }
+                xhr.send(payload);
+                if (button) {
+                    document.getElementById(button).disabled = true;
+                }
             }
+            // Kick off the device updates on load.
+            window.addEventListener('load', deviceControl())
         </script>
     </head>
     <body> <h1>Rockwren</h1>
