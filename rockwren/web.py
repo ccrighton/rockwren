@@ -5,6 +5,7 @@
 Device web interface for initial setup via access point and for configuration.
 """
 import gc
+import io
 import sys
 
 import machine
@@ -60,8 +61,17 @@ def device_control(request):
     if not request.form:
         return server.Response('{"error": "Bad request"}', STATUS_CODE_400, {"Content-Type": "application/json"})
     if device:
-        resp, status = device.web_post_handler(request.form)
-        return server.Response(resp, status, {"Content-Type": "application/json"})
+        try:
+            resp, status = device.web_post_handler(request.form)
+            return server.Response(resp, status, {"Content-Type": "application/json"})
+        except Exception as ex:
+            try:
+                trace = io.StringIO()
+                sys.print_exception(ex, trace)
+                utils.logstream(trace)
+            finally:
+                return server.Response('{"error": "Error handling device control request"}', STATUS_CODE_400,
+                                       {"Content-Type": "application/json"})
     return server.Response('{"error": "Device not found"}', STATUS_CODE_400, {"Content-Type": "application/json"})
 
 
