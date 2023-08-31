@@ -143,19 +143,15 @@ class Device:
         """
         self.notify_listeners()
 
-    async def listener_task(self, listener):
-        listener()
-
-    def notify_listeners(self) -> None:
+    def notify_listeners(self):
         """
         Notify all registered listeners of a change of state of the device.
         Listeners are registered using ``Device.register_listener(func).``
         """
         for listener in self.listeners:
-            uasyncio.create_task(self.listener_task(listener))
-            await uasyncio.sleep(0)
+            uasyncio.create_task(listener_task(listener))
 
-    def register_listener(self, func) -> None:
+    def register_listener(self, func):
         """
         Register state change listener functions.
         :param func: listener function
@@ -251,3 +247,7 @@ def fly(the_device: Device):
                 uasyncio.new_event_loop()  # Clear retained state
             finally:
                 machine.reset()
+
+
+async def listener_task(listener):
+    listener()
