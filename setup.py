@@ -27,6 +27,7 @@ setup(
                               "rockwren/restart.html",
                               "rockwren/style.css",
                               "rockwren/viewlogs.html",
+                              "rockwren/wifi_config.html",
                               "rockwren/wifi_setup.html"])]
 
 )
