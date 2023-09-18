@@ -175,7 +175,7 @@ class Device:
     def discovery_function(self):
         """
         The dicovery function to run for this device
-        :return: the discovery function that produces a discovery json message
+        :return: an array of tuples (device_type, discovery_json).
         """
         return None
 
@@ -228,7 +228,6 @@ def fly(the_device: Device):
             ntptime.settime()
 
             client = mqtt_client.MqttDevice(the_device, rockwren_env.MQTT_SERVER, rockwren_env.CONNECTION_PARAMS,
-                                            discovery_function=the_device.discovery_function(),
                                             command_handler=the_device.command_handler,
                                             mqtt_port=int(rockwren_env.MQTT_PORT))
             client.run(uasyncio.get_event_loop())

@@ -41,7 +41,7 @@ class MqttDevice:
 
     def __init__(self, device: rockwren.Device, mqtt_server, connection_params, state_topic=b"/state",
                  command_topic=b"/command", availability_topic=b"/LWT", command_handler=noop_topic_handler,
-                 mqtt_port=0, client_id=b"rockwren", discovery_function=None):
+                 mqtt_port=0, client_id=b"rockwren"):
         self.device = device  # Switch, light etc.
         # Register this client with the device
         self.device.register_mqtt_client(self)
@@ -62,10 +62,9 @@ class MqttDevice:
         self.availability_topic = self.device_topic + availability_topic
         self.register_topic_handler(command_topic, command_handler)
 
-        if discovery_function is None:
-            self._discovery_functions = {device.device_type: default_discovery}
-        else:
-            self._discovery_functions = {device.device_type: discovery_function}
+        # populate discovery functions from the device
+        # List of (device_type, discovery_json) tuples
+        self._discovery_functions = device.discovery_function()
 
         self._publish_interval = env.PUBLISH_INTERVAL
         self._last_publish = 0
@@ -84,12 +83,15 @@ class MqttDevice:
         if len(self._commands) > self._max_commands:
             logging.error(f"subscription_callback: Command queue full, discarding. {topic} {msg.decode()}")
             return
+        decoded_msg = ""
         try:
             decoded_msg = ujson.loads(msg)
-            # Push the (topic, message) tuple
-            self._commands.append((topic, decoded_msg))
         except Exception:
-            logging.error(f"subscription_callback: Unknown message {topic} {msg.decode()}")
+            # Handle simple non-json payloads
+            decoded_msg = msg.decode()
+            logging.debug(f"subscription_callback: Message not json using raw message {topic.decode()} {msg.decode()}")
+        # Push the (topic, message) tuple
+        self._commands.append((topic, decoded_msg))
 
     def register_topic_handler(self, topic_suffix: bytes, topic_handler) -> None:
         """
@@ -166,22 +168,20 @@ class MqttDevice:
         self._mqtt_client.publish(self.state_topic, self.device.device_state())
         self._status_reported = True
 
-    def register_discovery_function(self, device_type: bytes, func):
-        """
-        Register functions that produce discovery message objects.  Used for devices that require more than on
-        discovery message.
-        :param device_type: the device type e.g. light, switch, binary_sensor, button
-        :param func: function that provides the discovery message
-        :return: json encode-able object containing the discovery message
-        """
-        self._discovery_functions[device_type] = func
-
     def send_discovery_msgs(self):
         """ Send all registered discovery messages for the device. """
-        for device_type, discovery_function in self._discovery_functions.items():
-            discovery_topic = b"homeassistant/" + device_type + b"/" + self.device_id + b"/config"
-            self._mqtt_client.publish(discovery_topic, ujson.dumps(discovery_function(self)))
-            logging.info(f"Sending discovery message with topic {discovery_topic}")
+        try:
+            for device_type, discovery_json in self._discovery_functions:
+                if type(device_type) != bytes:
+                    device_type = device_type.encode()
+                discovery_topic = b"homeassistant/" + device_type + b"/" + self.device_id + b"/config"
+                self._mqtt_client.publish(discovery_topic, ujson.dumps(discovery_json))
+                logging.info(f"Sending discovery message with topic {discovery_topic}")
+        except Exception as ex:
+            logging.error(f"Failed to send discovery messages.")
+            trace = io.StringIO()
+            sys.print_exception(ex, trace)
+            utils.logstream(trace)
 
     async def _mqtt_command_handler(self) -> None:
         """ MQTT command handler
@@ -222,27 +222,29 @@ class MqttDevice:
 
 def default_discovery(mqtt_client: MqttDevice):
     """ Default Home Assistant discovery message for a json based MQTT Light.
-        See https://www.home-assistant.io/integrations/light.mqtt/ """
-    return {"unique_id": f"{mqtt_client.device_id}_{mqtt_client.device.device_type}",
-            "name": mqtt_client.device.name,
-            "platform": "mqtt",
-            "schema": "json",
-            "state_topic": mqtt_client.state_topic,
-            "command_topic": mqtt_client.command_topic,
-            "payload_on": "ON",
-            "payload_off": "OFF",
-            "availability": {
-                "topic": mqtt_client.availability_topic
-            },
-            "device": {
-                "identifiers": [mqtt_client.device_id],
-                "name": f"Rockwren Pico W LED",
-                "sw_version": "0.1",
-                "model": "",
-                "manufacturer": "Rockwren",
-                "configuration_url": f"http://{mqtt_client.connection_params['ip_address']}/"
-            }
-            }
+        See https://www.home-assistant.io/integrations/light.mqtt/
+        :returns array of tuples (device_type, discovery_json)
+    """
+    return [("light", {"unique_id": f"{mqtt_client.device_id}_{mqtt_client.device.device_type}",
+                       "name": mqtt_client.device.name,
+                       "platform": "mqtt",
+                       "schema": "json",
+                       "state_topic": mqtt_client.state_topic,
+                       "command_topic": mqtt_client.command_topic,
+                       "payload_on": "ON",
+                       "payload_off": "OFF",
+                       "availability": {
+                           "topic": mqtt_client.availability_topic
+                       },
+                       "device": {
+                           "identifiers": [mqtt_client.device_id],
+                           "name": f"Rockwren Pico W LED",
+                           "sw_version": "0.1",
+                           "model": "",
+                           "manufacturer": "Rockwren",
+                           "configuration_url": f"http://{mqtt_client.connection_params['ip_address']}/"
+                       }
+                       })]
 
 
 #    def send_remove_discovery(self):
