@@ -57,29 +57,26 @@ class PicoWSwitch(rockwren.Device):
         super().register_mqtt_client(_mqtt_client)
 
     def discovery_function(self):
-        return pico_switch_discovery
 
-
-def pico_switch_discovery(mqtt_client: mqtt_client.MqttDevice):
-    return {"unique_id": f"{mqtt_client.device_id}_switch",
-            "name": "Rockwren Pico W Switch",
-            "platform": "mqtt",
-            "state_topic": mqtt_client.state_topic,
-            "command_topic": mqtt_client.command_topic,
-            "payload_on": '{"state": "ON"}',
-            "payload_off": '{"state": "OFF"}',
-            "availability": {
-                "topic": mqtt_client.availability_topic
-            },
-            "device": {
-                "identifiers": [mqtt_client.device_id],
-                "name": f"Rockwren Pico W Switch",
-                "sw_version": "0.1",
-                "model": "",
-                "manufacturer": "Rockwren",
-                "configuration_url": f"http://{mqtt_client.connection_params['ip_address']}/"
-            }
-            }
+        return [("switch", {"unique_id": f"{self.mqtt_client.device_id}_switch",
+                            "name": "Rockwren Pico W Switch",
+                            "platform": "mqtt",
+                            "state_topic": self.mqtt_client.state_topic,
+                            "command_topic": self.mqtt_client.command_topic,
+                            "payload_on": '{"state": "ON"}',
+                            "payload_off": '{"state": "OFF"}',
+                            "availability": {
+                                "topic": self.mqtt_client.availability_topic
+                            },
+                            "device": {
+                                "identifiers": [self.mqtt_client.device_id],
+                                "name": f"Rockwren Pico W Switch",
+                                "sw_version": "0.1",
+                                "model": "",
+                                "manufacturer": "Rockwren",
+                                "configuration_url": f"http://{self.mqtt_client.connection_params['ip_address']}/"
+                            }
+                            })]
 
 
 rockwren.fly(PicoWSwitch())

@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 from machine import Pin
 
+from rockwren import mqtt_client
 from rockwren import rockwren
 
 
@@ -30,6 +31,9 @@ class Esp8266LED(rockwren.Device):
             elif message.get("state").upper() == "OFF":
                 self.off()
         super().command_handler(topic, message)  # Always call last
+
+    def discovery_function(self):
+        return self.mqtt_client.default_discovery()
 
 
 rockwren.fly(Esp8266LED())

@@ -29,5 +29,8 @@ class PicoWLED(rockwren.Device):
                 self.off()
         super().command_handler(topic, message)  # Always call last
 
+    def discovery_function(self):
+        return self.mqtt_client.default_discovery()
+
 
 rockwren.fly(PicoWLED())
