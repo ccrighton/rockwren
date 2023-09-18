@@ -46,8 +46,9 @@ def pem_to_der(pem):
 
 def logstream(stream: io.StringIO):
     """ Log stream line by line to avoid allocating a large chunk of memory"""
-    while True:
+    stream.seek(0)
+    line = stream.readline()
+    logging.error(line)
+    while line:
         line = stream.readline()
-        if line == '':
-            break
         logging.error(line)
