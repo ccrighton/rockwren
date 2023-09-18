@@ -33,9 +33,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
                     // Call a function when the state changes.
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
                         deviceState = JSON.parse(xhr.responseText);
-                        if (updateCallback) {
-                            updateCallback()
-                        }
                         console.log(deviceState);
                         if (deviceState.state) {
                             state = document.getElementById("device-state");
@@ -46,9 +43,12 @@ SPDX-License-Identifier: GPL-3.0-or-later
                                 state.style.color = "#FF0000";
                             }
                         }
+                        if (updateCallback) {
+                            updateCallback()
+                        }
                     }
-                    if (button) {
-                        document.getElementById(button).disabled = false;
+                    if (elementId) {
+                        document.getElementById(elementId).disabled = false;
                     }
                     clearTimeout(updateTimer);
                     updateTimer = setTimeout(deviceControl, refreshRate);
@@ -58,8 +58,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
                     payload = name + "=" + value;
                 }
                 xhr.send(payload);
-                if (button) {
-                    document.getElementById(button).disabled = true;
+                if (elementId) {
+                    document.getElementById(elementId).disabled = true;
                 }
             }
             // Kick off the device updates on load.
