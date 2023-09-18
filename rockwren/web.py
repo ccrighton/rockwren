@@ -210,8 +210,11 @@ def wifi_config(request: server.Request):
             logging.error(message)
 
     network_list = []
-    if sys.platform != 'esp8266':
-        network_list = networking.scan_networks()
+    try:
+        if sys.platform != 'esp8266':
+            network_list = networking.scan_networks(env.CONNECTION_PARAMS["wlan"])
+    except:
+        pass
 
     return template.render_template(DIR_PATH + "/wifi_config.html",
                                     web_path=DIR_PATH,

@@ -53,7 +53,7 @@ def connect(hostname='rockwren'):
 
     ip_address, subnet_mask, gateway, dns_server = wlan.ifconfig()
     logging.info(f'Connected on {ip_address}')
-    return {"ip_address": ip_address, "subnet_mask": subnet_mask, "gateway": gateway, "dns_server": dns_server}
+    return {"wlan": wlan, "ip_address": ip_address, "subnet_mask": subnet_mask, "gateway": gateway, "dns_server": dns_server}
 
 
 def open_socket(ip_address, port):

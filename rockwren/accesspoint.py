@@ -47,8 +47,11 @@ def wifi_setup(request):
             logging.error(message)
 
     network_list = []
-    if sys.platform != 'esp8266':
-        network_list = networking.scan_networks()
+    try:
+        if sys.platform != 'esp8266':
+            network_list = networking.scan_networks(ap)
+    except:
+        pass
 
     return template.render_template(dir_path + "/wifi_setup.html",
                                     web_path=dir_path,
