@@ -3,6 +3,15 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+@media (prefers-color-scheme: dark) {
+  body {
+	color: #eee;
+	background: #121212;
+  }
+  a {
+	color: #809fff;
+  }
+}
 html{font-family: Helvetica; display:inline-block; margin: 0px auto; text-align: center;}
 h2{color: #000000; padding: 2vh;}
 p{font-size: 1.0rem;}
