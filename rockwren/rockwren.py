@@ -15,14 +15,14 @@ import uasyncio
 import ubinascii
 import ujson
 
+from phew import logging
+from phew import server
 from . import accesspoint
 from . import env as rockwren_env
 from . import mqtt_client
 from . import networking
 from . import utils
 from . import web
-from phew import logging
-from phew import server
 
 
 class Device:

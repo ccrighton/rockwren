@@ -4,6 +4,12 @@
 
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+exclude: |
+    (?x)^(
+        rockwren/jsondb_test.py|
+        rockwren/utils_test.py|
+        rockwren/fqdn_test.py
+    )$
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.4.0
@@ -25,3 +31,9 @@ repos:
   rev: v3.10.0
   hooks:
   - id: reorder-python-imports
+    exclude: |
+      (?x)^(
+          rockwren/accesspoint.py |
+          rockwren/mqtt_client.py |
+          rockwren/rockwren.py
+      )$

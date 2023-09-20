@@ -11,6 +11,9 @@ import network
 import uasyncio
 from micropython import const
 
+from phew import logging
+from phew import server
+from phew import template
 from . import networking
 from . import utils
 
@@ -19,7 +22,6 @@ try:
 except Exception:
     import socket
 
-from phew import server, template, logging
 
 ap = None
 accesspointapp = server.Phew()

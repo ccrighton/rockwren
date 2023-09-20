@@ -1,12 +1,17 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+import json
+import sys
 import unittest
 
-import ujson
+try:
+    del sys.modules['ujson']
+except:
+    pass
+sys.modules['ujson'] = __import__('json')
 
 from . import jsondb
-
 
 class TestJsonDbMethods(unittest.TestCase):
 
@@ -104,15 +109,15 @@ class TestJsonDbMethods(unittest.TestCase):
 
         with open("db.json") as f:
             s = f.read()
-            self.assertEqual(cert, ujson.loads(s)['mqtt_client_cert'])
+            self.assertEqual(cert, json.loads(s)['mqtt_client_cert'])
 
         db["first_boot"] = False
         db.save()
 
         with open("db.json") as f:
             s = f.read()
-            self.assertEqual(False, ujson.loads(s)['first_boot'])
-            self.assertEqual(cert, ujson.loads(s)['mqtt_client_cert'])
+            self.assertEqual(False, json.loads(s)['first_boot'])
+            self.assertEqual(cert, json.loads(s)['mqtt_client_cert'])
 
 
 if __name__ == '__main__':

@@ -15,10 +15,10 @@ import ubinascii
 import ujson
 from umqtt.robust2 import MQTTClient
 
+from phew import logging
 from . import env
 from . import rockwren
 from . import utils
-from phew import logging
 
 
 def noop_topic_handler(topic, message):
@@ -238,8 +238,8 @@ def default_discovery(mqtt_client: MqttDevice):
                        },
                        "device": {
                            "identifiers": [mqtt_client.device_id],
-                           "name": f"Rockwren Pico W LED",
-                           "sw_version": "0.1",
+                           "name": f"Rockwren Light",
+                           "sw_version": "1.0",
                            "model": "",
                            "manufacturer": "Rockwren",
                            "configuration_url": f"http://{mqtt_client.connection_params['ip_address']}/"
