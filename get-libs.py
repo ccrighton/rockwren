@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+import argparse
 import os
 import tarfile
 from pathlib import Path
@@ -19,8 +20,9 @@ def tar_members_stripped(tar, levels_stripped=1):
     return members
 
 
-def download_and_extract(package_name):
+def download_and_extract(package_name, outdir):
 
+    print(f"download_and_extract({package_name})")
     filename = None
     url = None
 
@@ -38,15 +40,30 @@ def download_and_extract(package_name):
     # open file
     with tarfile.open(package_filename) as f:
         print(f.getmembers())
-        f.extractall(path='deploy/lib', members=tar_members_stripped(f, 1))
+        f.extractall(path=outdir, members=tar_members_stripped(f, 1))
 
 
-try:
-    os.mkdir("deploy")
-    os.mkdir("deploy/lib")
-except Exception as e:
-    pprint(e)
-    pass
+def parse_args():
+    """Parse the args."""
+    parser = argparse.ArgumentParser(
+        description='get-libs.py')
+    parser.add_argument('-o', '--outdir', type=str, required=True,
+                        default='build/lib',
+                        help='Output directory for module')
+    parser.add_argument('-m', '--module', type=str, required=True,
+                        help='Module name')
 
-download_and_extract("micropython-umqtt.simple2")
-download_and_extract("micropython-umqtt.robust2")
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+
+    args = parse_args()
+
+    try:
+        os.makedirs(args.outdir)
+    except Exception as e:
+        pprint(e)
+        pass
+
+    download_and_extract(args.module, args.outdir)
