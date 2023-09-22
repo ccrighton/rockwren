@@ -11,9 +11,12 @@
   a {
 	color: #809fff;
   }
+  textarea {
+      color: forestgreen;
+      background: #121212;
+  }
 }
 html{font-family: Helvetica; display:inline-block; margin: 0px auto; text-align: center;}
-h2{color: #000000; padding: 2vh;}
 p{font-size: 1.0rem;}
 .button{border:0;border-radius:0.3rem;background:#1fa3ec;color:#ffffff;line-height:2.4rem;padding: 4px 8px;
 font-size:1.2rem;-webkit-transition-duration:0.4s;transition-duration:0.4s;cursor:pointer;}
