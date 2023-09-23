@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 from machine import Pin
 
+from rockwren import mqtt_client
 from rockwren import rockwren
 
 
@@ -30,7 +31,7 @@ class PicoWLED(rockwren.Device):
         super().command_handler(topic, message)  # Always call last
 
     def discovery_function(self):
-        return self.mqtt_client.default_discovery()
+        return mqtt_client.default_discovery(self.mqtt_client)
 
 
 rockwren.fly(PicoWLED())
