@@ -1,17 +1,16 @@
-# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+# SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 import argparse
 import os
-from pprint import pprint
 
-import python_minifier
+import minify_html
 
 
 def minify(directory):
 
-    files = [directory + '/' + f for f in os.listdir(directory)
-             if os.path.isfile(directory + '/' + f) and f.endswith('py')]
+    files = [directory + '/' + f for f in os.listdir(directory) if os.path.isfile(directory + '/' + f)
+             and (f.endswith('html') or f.endswith('css') or f.endswith('js'))]
 
     total_size = 0
     total_minified_size = 0
@@ -20,12 +19,14 @@ def minify(directory):
         size = os.stat(filename).st_size
         minified_size = 0
         minified = None
-        with open(filename) as f:
-            minified = python_minifier.minify(f.read())
+        with open(filename, 'r') as f:
+            minified = minify_html.minify(f.read(), minify_js=True, remove_processing_instructions=True)
             minified_size = len(minified)
-            total_size += size
         with open(filename, 'w') as f:
+            f.seek(0)
             f.write(minified)
+
+        total_size += size
         total_minified_size += minified_size
         print(f"{filename}: Size: {total_size}, minified size: {total_minified_size}, "
               f"%{total_minified_size / total_size * 100:.0f}")
@@ -34,7 +35,7 @@ def minify(directory):
 def parse_args():
     """Parse the args."""
     parser = argparse.ArgumentParser(
-        description='minifier.py')
+        description='minifier_html.py')
     parser.add_argument('-d', '--directory', type=str, required=True,
                         help='Directory of module to minify')
 

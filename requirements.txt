@@ -7,3 +7,5 @@ mpremote
 pypi_json
 reuse
 pre-commit
+python_minifier
+minify-html

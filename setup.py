@@ -6,13 +6,15 @@ from setuptools import setup
 setup(
     name="rockwren",
     version="1.0.0",
-    description="Device integration solution (MQTT, Web) for MicroPython on the ESP8266 and Pico W.",
+    description="Device framework (MQTT, Web) for MicroPython on the ESP8266 and Pico W.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
+    url="https://bitbucket/ccrighton/rockwren",
     project_urls={
         "GitHub": "https://bitbucket/ccrighton/rockwren"
     },
     author="Charlie Crighton",
+    author_email="rockwren@crighton.nz",
     maintainer="Charlie Crighton",
     maintainer_email="rockwren@crighton.nz",
     license="GPLv3-or-later",
