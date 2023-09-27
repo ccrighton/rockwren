@@ -6,9 +6,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 exclude: |
     (?x)^(
-        rockwren/jsondb_test.py|
-        rockwren/utils_test.py|
-        rockwren/fqdn_test.py
+        tests/.* |
     )$
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks

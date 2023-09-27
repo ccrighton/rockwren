@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.nz>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[build-system]
+requires = ["setuptools", "minify-html", "python-minifier"]
+build-backend = "setuptools.build_meta"
