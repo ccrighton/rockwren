@@ -1,12 +1,16 @@
 # SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+import sys
 import unittest
 from unittest import mock
 from unittest.mock import patch
 
-spi_mock = mock.Mock()
+from .context import rockwren
 
+sys.modules['ubinascii'] = __import__('binascii')
+sys.modules['ujson'] = __import__('json')
+spi_mock = mock.Mock()
 machine_mock = mock.MagicMock()
 machine_mock.Pin = mock.MagicMock()
 machine_mock.SPI = mock.MagicMock(return_value=spi_mock)
@@ -21,7 +25,7 @@ patch.dict("sys.modules", ujson=mock.MagicMock()).start()
 
 from rockwren import utils
 
-class TestJsonDbMethods(unittest.TestCase):
+class TestUtils(unittest.TestCase):
 
     def test_fqdn(self):
         self.assertTrue(utils.is_fqdn("a1zlvbsytboce2-ats.iot.ap-southeast-2.amazonaws.com"))

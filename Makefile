@@ -29,9 +29,9 @@ help:  ## Display this help
 dist: test license-check setup-sdist  ## Package rockwren python distribution
 
 test:  ## Run test cases
-	. ./venv/Scripts/activate
-	python -m unittest rockwren/*_test.py
-	rm db.json
+	. ~/.virtualenvs/rockwren/bin/activate
+	python -m unittest tests/*_test.py -v
+	rm -f db.json
 
 license-check:  ## Check reuse license compliance
 	reuse lint

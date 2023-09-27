@@ -5,13 +5,15 @@ import json
 import sys
 import unittest
 
+from .context import rockwren
+
 try:
     del sys.modules['ujson']
 except:
     pass
 sys.modules['ujson'] = __import__('json')
 
-from . import jsondb
+from rockwren import jsondb
 
 class TestJsonDbMethods(unittest.TestCase):
 

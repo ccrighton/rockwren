@@ -7,6 +7,16 @@ import os
 import minify_html
 
 
+def minify_file(filename):
+    with open(filename, 'r') as f:
+        minified = minify_html.minify(f.read(), minify_js=True, remove_processing_instructions=True)
+        minified_size = len(minified)
+    with open(filename, 'w') as f:
+        f.seek(0)
+        f.write(minified)
+    return minified_size
+
+
 def minify(directory):
 
     files = [directory + '/' + f for f in os.listdir(directory) if os.path.isfile(directory + '/' + f)
@@ -17,15 +27,7 @@ def minify(directory):
 
     for filename in files:
         size = os.stat(filename).st_size
-        minified_size = 0
-        minified = None
-        with open(filename, 'r') as f:
-            minified = minify_html.minify(f.read(), minify_js=True, remove_processing_instructions=True)
-            minified_size = len(minified)
-        with open(filename, 'w') as f:
-            f.seek(0)
-            f.write(minified)
-
+        minified_size = minify_file(filename)
         total_size += size
         total_minified_size += minified_size
         print(f"{filename}: Size: {total_size}, minified size: {total_minified_size}, "
