@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+# SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.net.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 """
@@ -23,6 +23,7 @@ from . import mqtt_client
 from . import networking
 from . import utils
 from . import web
+from .version import __version__
 
 
 class Device:
@@ -87,7 +88,7 @@ class Device:
         return ujson.dumps({'device': {
             'name': self.name,
             'type': self.device_type,
-            'rockwren_version': '1.0.0',
+            'rockwren_version': __version__,
             'unique_id': ubinascii.hexlify(machine.unique_id()),
             'platform': sys.platform,
             'python_version': sys.version,

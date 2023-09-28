@@ -1,13 +1,13 @@
 #!/usr/bin/make -f
 #
-# SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.nz>
+# SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.net.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 SHELL := /bin/bash
 .ONESHELL:
 .DEFAULT_GOAL:=help
-.PHONY: help dist license-check dist setup-sdist clone-mp build-mp-esp8266 build-mpycross build-mp-esp8266-submodules \
+.PHONY: help dist license-check dist dist-build clone-mp build-mp-esp8266 build-mpycross build-mp-esp8266-submodules \
         build-esp8266 activate-venv install-requirements copy-esp8266-modules flash-esp8266-firmware flash-esp8266 \
         install-example install-requirements reuse-annotate device-reset
 .SILENT: help
@@ -26,7 +26,7 @@ help:  ## Display this help
 	$(info )
 	fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\:.*##/:/' | sed -e 's/##//'
 
-dist: test license-check setup-sdist  ## Package rockwren python distribution
+dist: test license-check dist-build  ## Package rockwren python distribution
 
 test:  ## Run test cases
 	. ~/.virtualenvs/rockwren/bin/activate
@@ -36,10 +36,9 @@ test:  ## Run test cases
 license-check:  ## Check reuse license compliance
 	reuse lint
 
-setup-sdist:
-	python setup.py sdist
-
-build-esp8266: clone-mp build-mpycross build-mp-esp8266-submodules copy-esp8266-modules build-mp-esp8266  ## Build ESP8266 Firmware
+dist-build:
+	rm -rf dist
+	python -m build
 
 clone-mp:
 	mkdir build
@@ -58,17 +57,14 @@ build-mp-esp8266-submodules:
 build-mp-esp8266:
 	docker run --rm -v ${HOME}:${HOME} -u ${UID} -w ${PWD}/build/micropython larsks/esp-open-sdk make -C ports/esp8266 V=1 -j BOARD=ESP8266_GENERIC
 
-minify-libraries: activate-venv install-requirements
-	cp -r rockwren build/lib
-	cp -r phew/phew build/lib
-	python minifier.py -d build/lib/rockwren
-	python minifier_html.py -d build/lib/rockwren
-	python minifier.py -d build/lib/phew
+stage-libraries: activate-venv install-requirements dist
+	python unpack.py -f dist/rockwren-*.tar.gz -d build/lib -m rockwren
+	python get-libs.py -o build/lib -m micropython-ccrighton-phew
 	python get-libs.py -o build/lib -m micropython_umqtt.simple2
 	python get-libs.py -o build/lib -m micropython_umqtt.robust2
 	rm -r build/lib/*/__pycache__
 
-copy-esp8266-modules: minify-libraries
+copy-esp8266-modules: stage-libraries
 	cp -r build/lib/umqtt ${PWD}/build/micropython/ports/esp8266/modules
 	cp -r build/lib/rockwren ${PWD}/build/micropython/ports/esp8266/modules
 	cp -r build/lib/phew ${PWD}/build/micropython/ports/esp8266/modules
@@ -77,17 +73,23 @@ flash-esp8266-firmware: activate-venv install-requirements
 	python -m esptool --port ${PORT} --chip esp8266 --baud 460800 write_flash --flash_size detect 0 ${PWD}/build/micropython/ports/esp8266/build-ESP8266_GENERIC/firmware.bin
 	sleep 5
 
-flash-esp8266: flash-esp8266-firmware copy-esp8266-modules   ## Flash ESP8266 Rockwren firmware to device. PORT variable can be configured e.g. PORT=/dev/ttyUSB1
+build-esp8266: clone-mp build-mpycross build-mp-esp8266-submodules copy-esp8266-modules build-mp-esp8266  ## Build ESP8266 Firmware
+
+flash-esp8266: flash-esp8266-firmware   ## Flash ESP8266 Rockwren firmware to device. PORT variable can be configured e.g. PORT=/dev/ttyUSB1
 	mpremote cp build/lib/rockwren/*.html :lib/rockwren/
 	mpremote cp build/lib/rockwren/*.css :lib/rockwren/
 	mpremote cp build/lib/rockwren/*.svg :lib/rockwren/
 	#
 	mpremote reset
 
-install-pico: minify-libraries
+install-pico: stage-libraries  ## Install rockwren and dependencies on Raspberry Pi Pico W
+	pipkin install --no-index --find-links dist --force-reinstall  rockwren
+	pipkin install micropython-umqtt.simple2
+	pipkin install micropython-umqtt.robust2
+	pipkin install --no-index --find-links phew/dist --force-reinstall  ccrighton-phew
 	cd build
-	mpremote cp -r lib :
-	mpremote reset
+	#mpremote cp -r lib :
+	#mpremote reset
 
 activate-venv:
 	@source ${VENV}/bin/activate
@@ -111,4 +113,10 @@ git-setup: activate-venv install-requirements  ## Set up git (pre-commit hooks)
 
 reuse-annotate:  ## Annotate files with copyright and license details. FILE variable must be set e.g. FILE=rockwren/rockwren.py
 	$(call ndeffile,FILE)
-	reuse annotate --license GPL-3.0-or-later --copyright "Charles Crighton <code@crighton.nz>" $(FILE)
+	reuse annotate --license GPL-3.0-or-later --copyright "Charles Crighton <code@crighton.net.nz>" $(FILE)
+
+publish-testpypi:  ## Publish distribution file to TestPyPI
+	python3 -m twine upload --repository testpypi dist/*
+
+publish-pypi:  ## Publish distribution file to PyPI
+	 python3 -m twine upload --repository pypi dist/*

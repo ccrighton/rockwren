@@ -1,12 +1,11 @@
-# SPDX-FileCopyrightText: 2023 Charles Crighton <rockwren@crighton.nz>
+# SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.net.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 import os
+from pathlib import Path
 
 import minify_html
 import python_minifier
-from setuptools import Command
-from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.sdist import sdist
 
@@ -81,20 +80,24 @@ class SdistAndMinify(sdist):
         minify_py_dir(base_dir + '/rockwren')
 
 
+here = Path(__file__).parent.resolve()
+
+exec(open(here / 'rockwren' / 'version.py').read())
+
 setup(
-    name="rockwren",
-    version="1.0.0",
+    name="micropython-rockwren",
+    version=__version__,
     description="Device framework (MQTT, Web) for MicroPython on the ESP8266 and Pico W.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://bitbucket/ccrighton/rockwren",
+    url="https://github.com/ccrighton/rockwren",
     project_urls={
-        "GitHub": "https://bitbucket/ccrighton/rockwren"
+        "GitHub": "https://github.com/ccrighton/rockwren"
     },
     author="Charlie Crighton",
-    author_email="rockwren@crighton.nz",
+    author_email="code@crighton.net.nz",
     maintainer="Charlie Crighton",
-    maintainer_email="rockwren@crighton.nz",
+    maintainer_email="code@crighton.net.nz",
     license="GPLv3-or-later",
     license_files="LICENSES",
     packages=["rockwren"],
@@ -109,5 +112,10 @@ setup(
                                "viewlogs.html",
                                "wifi_config.html",
                                "wifi_setup.html"]},
+    install_requires=[
+        'micropython_umqtt.simple2==2.2.0',
+        'micropython_umqtt.robust2==2.2.0',
+        'micropython-ccrighton-phew',
+    ],
     cmdclass={'sdist': SdistAndMinify}
 )

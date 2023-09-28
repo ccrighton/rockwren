@@ -2,10 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+build
 esptool
-mpremote
-pypi_json
-reuse
-pre-commit
-python_minifier
 minify-html
+mpremote
+pipkin
+pre-commit
+pypi_json
+python_minifier
+reuse
+setuptools
