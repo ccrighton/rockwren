@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: rockwren
-Upstream-Contact: Charles Crighton <rockwren@crighton.nz>
+Upstream-Contact: Charles Crighton <code@crighton.net.nz>
 Source: https://github.com/ccrighton/rockwren
 
 # Sample paragraph, commented out:

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.nz>
+# SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.net.nz>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,3 +12,4 @@ pypi_json
 python_minifier
 reuse
 setuptools
+twine
