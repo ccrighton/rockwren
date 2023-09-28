@@ -13,14 +13,14 @@ Raspberry Pi Pico W but also runs on less capable devices such as the ESP8266.
 Why call this package rockwren?
 
 The [New Zealand rock wren (Pīwauwau)](https://www.doc.govt.nz/nature/native-animals/birds/birds-a-z/rock-wren-tuke/)
-is a tiny but widely admired alpine bird that lives in the mountains of Fiordland in New Zealand. It ability to
+is a tiny but widely admired alpine bird that lives in the mountains of Fiordland in New Zealand. It's ability to
 live life year round in a very harsh environment and it's small size seemed apt when thinking of a name for this
 micropython package.
 
 ## Features
 
 - Web interface for configuration and device control
-- MQTT client with certificate support (e.g. AWS IoT)
+- MQTT client with certificate support (e.g. AWS IoT or [Mosquitto](https://mosquitto.org/))
 - Access Point mode for device configuration
 - Home Assistant discovery via MQTT
 - The web interface supports:
@@ -115,6 +115,20 @@ rockwren.fly(PicoWLED())
    address of your device.  One options is [Fing](https://www.fing.com/) for Android and iOS.  Choose the device called ```rockwren``` on the list displayed by the IP scanner or router.
 9. Reconnect to the same SSID and in a browser navigate to IP address of the device.
 10. Click ```TOGGLE``` to turn the Pico W LED on and off.
+
+### Pipkin
+
+It is also possible to install from PyPI using the [```pipkin```](https://pypi.org/project/pipkin/) tool for managing micropython distribution packages.
+
+Install pipkin.
+```commandline
+pip install pipkin
+```
+Install ```micropython-rockwren``` and dependencies.
+```commandline
+pipkin install micropython-rockwren
+```
+
 
 ## Other Example Device Applications
   - [pico_led_light](https://github.com/ccrighton/micropython-rockwren/examples/pico_led_light)
