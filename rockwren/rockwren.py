@@ -178,7 +178,7 @@ class Device:
         The dicovery function to run for this device
         :return: an array of tuples (device_type, discovery_json).
         """
-        return None
+        return []
 
 
 def set_global_exception(loop):
