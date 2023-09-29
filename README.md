@@ -1,7 +1,7 @@
 <!--
 SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.net.nz>
 
-SPDX-License-Identifier: GPL-3.0-or-later
+SPDX-License-Identifier: CC-BY-4.0
 -->
 
 # [micropython-rockwren](https://github.com/ccrighton/rockwren)
@@ -16,6 +16,11 @@ The [New Zealand rock wren (Pīwauwau)](https://www.doc.govt.nz/nature/native-an
 is a tiny but widely admired alpine bird that lives in the mountains of Fiordland in New Zealand. It's ability to
 live life year round in a very harsh environment and it's small size seemed apt when thinking of a name for this
 micropython package.
+
+## Links
+- Source code repository: https://github.com/ccrighton/rockwren
+- Find existing issues or raise a bug: https://github.com/ccrighton/rockwren/issues
+- Package repository: https://pypi.org/project/micropython-rockwren/
 
 ## Features
 

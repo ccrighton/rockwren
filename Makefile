@@ -111,9 +111,13 @@ clean:  ## Clean
 git-setup: activate-venv install-requirements  ## Set up git (pre-commit hooks)
 	pre-commit install
 
-reuse-annotate:  ## Annotate files with copyright and license details. FILE variable must be set e.g. FILE=rockwren/rockwren.py
+reuse-annotate-gpl3:  ## Annotate files with copyright and license details. FILE variable must be set e.g. FILE=rockwren/rockwren.py
 	$(call ndeffile,FILE)
 	reuse annotate --license GPL-3.0-or-later --copyright "Charles Crighton <code@crighton.net.nz>" $(FILE)
+
+reuse-annotate-cc-by-4:  ## Annotate files with copyright and license details. FILE variable must be set e.g. FILE=docs/main-screen.png
+	$(call ndeffile,FILE)
+	reuse annotate --license CC-BY-4.0 --copyright "Charles Crighton <code@crighton.net.nz>" $(FILE)
 
 publish-testpypi:  ## Publish distribution file to TestPyPI
 	python3 -m twine upload --repository testpypi dist/*
