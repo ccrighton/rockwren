@@ -14,7 +14,7 @@ steps for adding functionality to a rockwren device.
 
 A minimal rockwren device only needs a ```main.py``` that passes a device class to ```rockwren.fly```.
 
-After installing rockwren, the ```main.py``` module in this tutorial needs
+After installing rockwren, copy the ```main.py``` module below to the root directory of the device.
 
 ```python
 from rockwren import rockwren
@@ -22,12 +22,12 @@ from rockwren import rockwren
 rockwren.fly(rockwren.Device())
 ```
 
-The device will provide a web interface and MQTT support for turning on and off but these controls do not result in any
-physical action in the device.
+The device with this basic application will provide a web interface and MQTT support for turning on and off but
+these controls do not result in any physical action in the device.
 
 ## Adding Some Behaviour
 
-The Pico W has an onboard LED that can be controlled.  Add the LED pin to the device and use the default on and off
+The Pico W has an onboard LED that can be controlled.  Add the LED pin to the device declaration and use the default on and off
 commands to turn the onboard LED on and off.
 
 ```python
@@ -54,17 +54,17 @@ class PicoWLED(rockwren.Device):
 rockwren.fly(PicoWLED())
 ```
 
-This device will provides a web interface to turn the onboard LED on and off. Use the TOGGLE button
+This device will provide a web interface to turn the onboard LED on and off. Use the TOGGLE button
 as shown below to control the LED.
 
 In this example, ```__init__``` must be extended to create the instance variable ```self.led```.  The ```apply_state```
 method must be extended to turn the led on or off based on the state of the device.
 
-![Main screen](/main-screen.png)
+![Main screen](main-screen.png)
 
 ## Add support for MQTT Commands
 
-The device can now be controlled from the web UI to toggle the onboard LED.  However, to support control
+The device can now be controlled from the web UI to toggle the onboard LED.  To support control
 via MQTT the ```command_handler``` method of the device must be extended in the example above.
 
 ```python
@@ -81,8 +81,8 @@ The ```command_handler``` receives a decoded json object.  The two messages supp
 and ```{"state": "OFF"}```.
 
 To receive the MQTT commands click the ```MQTT Configuration``` button on the main screen of the
-web UI.  Once the device is connected successfully to an MQTT server these command can be sent to control
-the device.
+web UI.  Once the device is connected successfully to an MQTT server the command messages can be sent on the device
+command topic to control the device.
 
 A command can be published to the device using the [mosquitto_pub](https://mosquitto.org/man/mosquitto_pub-1.html) tool
 included with the [mosquitto](https://mosquitto.org/) MQTT server.
@@ -107,7 +107,8 @@ logged and the change of state.
 
 Rockwren supports sending MQTT discovery messages for [Home Assistant](https://www.home-assistant.io/) discovery.
 
-Rockwren provides a default discovery message for a light that can be used to switch the onboard LED on and off.  Add the following discovery declaration method to the device class above.
+Rockwren provides a default discovery message for a light.  This default discovery will support switching the onboard
+LED on and off.  Add the following discovery declaration method to the device class above.
 
 ```python
     from rockwren import mqtt_client
@@ -121,20 +122,21 @@ single message is sent.  For more complex devices, multiple discovery messages c
 
 ## Updating The Device Controls In The Web UI
 
-Rockwren provides a basic control UI out of the box that displays the state of the device (ON or OFF) and provides a
+Rockwren provides basic control UI out of the box that displays the state of the device (ON or OFF) and provides a
 single TOGGLE button to change the state.
 
-![Main Screen Controls](/main-screen-controls.png)
+![Main Screen Controls](main-screen-controls.png)
 
 There are two parts of this UI control:
 - Current state display (ON or OFF)
 - An HTML input to control the device (in this case a single button labelled TOGGLE)
 
 This control is provided by a block of html that is included in the rendering of the main web UI page.
-The default block is shown below.  To customise the web UI device control this block must be copied to the root
+The default block is shown below.  To customise the web UI device control an html block must be copied to the root
 folder of the device in a file named, by convention, ```controls.html``` with the ```main.py``` script.
 
-The device class must set the ```self.template``` instance attribute to install the custom control block.
+The ```self.template``` instance attribute must be set in the ```__init__``` function of the device class to install
+the custom control block.
 
 ```python
     def __init__(self):
@@ -143,7 +145,7 @@ The device class must set the ```self.template``` instance attribute to install 
         self.template = "/controls.html"  # must be last
 ```
 
-The default ```controls.html```
+The default ```controls.html```:
 ```html
 {{'<h3 id="device-state" style="color:#008000;">ON</h3>' if device.is_on() else '<h3 id="device-state" style="color:#FF0000;">OFF</h3>'}}
 <p><button  class="button" id='b1' onclick="deviceControl('b1', 'toggle', 'true')">TOGGLE</button></p>
@@ -151,23 +153,25 @@ The default ```controls.html```
 
 The first line is the state display.  It uses a [Phew web server template](https://github.com/ccrighton/phew#templates)
 to set the initial state based on the device.  The ```device``` variable in the template is the ```rockwren.Device```
-class that is extended in the example above.  As this can be customised, so can the templates be customised.
+class that is extended in the example above.  As the device class can be extend to provide customisation options
+to to templates.
 
 ```device-state``` is supported out-of-the-box and is updated automatically by the web UI.
 
 The second line is the control button for the device. Rockwren provides a simple device control Javascript API.  When
 an event in the web UI is received for a device update, the ```deviceControl(id, attribute, value)``` function must be called.
 
-The id argument is the id of the source of the event. In this case the button with id ```b1```.  This will
-enable rockwren to disable the source of the event while a command is posted via HTTP to the device.  This prevents
+The ```id``` argument is the id of the source of the event. In this case the button with id ```b1```.  Rockwren
+uses the id to disable the source of the event while a command is posted via HTTP to the device to prevent
 unwanted double clicks.
 
-The attribute argument is the attribute to send to the device set to the contents of the value argument.
+The ```attribute``` argument is the attribute to send via form post to the device.  It is set to the content of the
+```value``` argument.
 
-In this example, ```deviceControl('b1', 'toggle', 'true')``` causes a json message ```{"toggle":"true"}``` to be sent
+In this example, ```deviceControl('b1', 'toggle', 'true')``` triggers are form post with  ```toggle=true``` to be sent
 to the device when the button ```onclick``` event is received.
 
-To add ON and OFF buttons to the controls block the following html block in ```controls.html``` can be loaded on
+To add ON and OFF buttons to the control block, the following html block is copied to the ```controls.html``` on
 the device.
 
 ```html
