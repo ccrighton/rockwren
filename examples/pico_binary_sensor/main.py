@@ -17,7 +17,7 @@ def switch_callback(pin):
     interrupt_flag.set()
 
 
-class PicoWSwitch(rockwren.Device):
+class PicoWBinarySensor(rockwren.Device):
 
     def __init__(self):
         self.pin = Pin(22, Pin.IN, Pin.PULL_UP)
@@ -49,34 +49,35 @@ class PicoWSwitch(rockwren.Device):
         """ Switch interrupt handler """
         while True:
             await interrupt_flag.wait()
-            if (time.ticks_ms() - debounce_time) > 300:
-                print("Toggle switch")
-                self.toggle()
+            pin_value = self.pin.value()
+            if pin_value:
+                print("Door Open")
+                self.on()  # On means open in Home Assistant
+            elif (time.ticks_ms() - debounce_time) > 300:
+                print("Door Closed")
+                self.off()  # Off means closed in Home Assistant
                 debounce_time = time.ticks_ms()
 
     def register_mqtt_client(self, _mqtt_client: mqtt_client.MqttDevice):
         super().register_mqtt_client(_mqtt_client)
 
     def discovery_function(self):
-        return [("switch", {"unique_id": f"{self.mqtt_client.device_id}_switch",
-                            "name": "Rockwren Pico W Switch",
-                            "platform": "mqtt",
-                            "state_topic": self.mqtt_client.state_topic,
-                            "command_topic": self.mqtt_client.command_topic,
-                            "payload_on": '{"state": "ON"}',
-                            "payload_off": '{"state": "OFF"}',
-                            "availability": {
-                                "topic": self.mqtt_client.availability_topic
-                            },
-                            "device": {
-                                "identifiers": [self.mqtt_client.device_id],
-                                "name": f"Rockwren Pico W Switch",
-                                "sw_version": "0.1",
-                                "model": "",
-                                "manufacturer": "Rockwren",
-                                "configuration_url": f"http://{self.mqtt_client.connection_params['ip_address']}/"
-                            }
-                            })]
+        return [("binary_sensor", {"unique_id": f"{self.mqtt_client.device_id}_door",
+                                   "name": "Rockwren Pico W Door Position Binary Sensor",
+                                   "platform": "door",
+                                   "state_topic": self.mqtt_client.state_topic,
+                                   "availability": {
+                                       "topic": self.mqtt_client.availability_topic
+                                   },
+                                   "device": {
+                                       "identifiers": [self.mqtt_client.device_id],
+                                       "name": f"Rockwren Pico W Door Sensor",
+                                       "sw_version": "1.0.0",
+                                       "model": "",
+                                       "manufacturer": "Rockwren",
+                                       "configuration_url": f"http://{self.mqtt_client.connection_params['ip_address']}/"
+                                   }
+                                   })]
 
 
-rockwren.fly(PicoWSwitch())
+rockwren.fly(PicoWBinarySensor())
