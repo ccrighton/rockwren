@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.net.nz>
 SPDX-License-Identifier: CC-BY-4.0
 -->
 
-# Rockwren Tutorial
+# Rockwren Tutorial - Pico W LED Light
 
 Rockwren is designed to support a wide range of devices: lights, sensors, switches, and other controls.  Rockwren
 provides Python, HTTP and Javascript APIs to support new device development. This tutorial walks through the basic
@@ -60,7 +60,7 @@ as shown below to control the LED.
 In this example, ```__init__``` must be extended to create the instance variable ```self.led```.  The ```apply_state```
 method must be extended to turn the led on or off based on the state of the device.
 
-![Main screen](main-screen.png)
+![Main screen](images/main-screen.png)
 
 ## Add support for MQTT Commands
 
@@ -125,7 +125,7 @@ single message is sent.  For more complex devices, multiple discovery messages c
 Rockwren provides basic control UI out of the box that displays the state of the device (ON or OFF) and provides a
 single TOGGLE button to change the state.
 
-![Main Screen Controls](main-screen-controls.png)
+![Main Screen Controls](images/main-screen-controls.png)
 
 There are two parts of this UI control:
 - Current state display (ON or OFF)
@@ -189,6 +189,7 @@ and css style blocks.
 ## What next?
 
 Check out the other example device applications for the Pico W:
+
   - [pico_led_light](https://github.com/ccrighton/rockwren/examples/pico_led_light)
   - [pico_binary_sensor](https://github.com/ccrighton/rockwren/examples/pico_binary_sensor)
   - [pico_temperature](https://github.com/ccrighton/rockwren/examples/pico_temperature)
