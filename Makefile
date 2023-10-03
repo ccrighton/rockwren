@@ -37,6 +37,7 @@ license-check:  ## Check reuse license compliance
 	reuse lint
 
 dist-build:
+	. ~/.virtualenvs/rockwren/bin/activate
 	rm -rf dist
 	python -m build
 
@@ -120,7 +121,9 @@ reuse-annotate-cc-by-4:  ## Annotate files with copyright and license details. F
 	reuse annotate --license CC-BY-4.0 --copyright "Charles Crighton <code@crighton.net.nz>" $(FILE)
 
 publish-testpypi:  ## Publish distribution file to TestPyPI
+	. ~/.virtualenvs/rockwren/bin/activate
 	python3 -m twine upload --repository testpypi dist/*
 
 publish-pypi:  ## Publish distribution file to PyPI
+	. ~/.virtualenvs/rockwren/bin/activate
 	 python3 -m twine upload --repository pypi dist/*
