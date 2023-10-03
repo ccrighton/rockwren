@@ -50,7 +50,9 @@ class Device:
 
     def web_post_handler(self, form):
         """ Handle web ui device control changes. Extend or override to provide handling for the
-            device change post requests. """
+            device change post requests.
+            :returns tuple (device state json, HTML response code)
+        """
         logging.debug(form)
         if not form:
             return "Form not provided.", 400
@@ -61,6 +63,7 @@ class Device:
         elif form.get("toggle"):
             """ Ignore value """
             self.toggle()
+        self.apply_state()
         return self.device_state(), 200
 
     def command_handler(self, topic, message):
