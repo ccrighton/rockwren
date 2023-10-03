@@ -36,11 +36,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Access Point mode for device configuration
 - Home Assistant discovery
 - Example device apps
-  - [esp8266_led_light](https://github.com/ccrighton/micropython-rockwren/examples/esp8266_led_light)
-  - [pico_led_light](https://github.com/ccrighton/micropython-rockwren/examples/pico_led_light)
-  - [pico_binary_sensor](https://github.com/ccrighton/micropython-rockwren/examples/pico_binary_sensor)
-  - [pico_temperature](https://github.com/ccrighton/micropython-rockwren/examples/pico_temperature)
-  - [pico_switch](https://github.com/ccrighton/micropython-rockwren/examples/pico_switch)
+  - [esp8266_led_light](/examples/esp8266_led_light)
+  - [pico_led_light](/examples/pico_led_light)
+  - [pico_binary_sensor](/examples/pico_binary_sensor)
+  - [pico_temperature](/examples/pico_temperature)
+  - [pico_switch](/examples/pico_switch)
 
 - Makefile for build, flash and distribution
   - Build esp8266 port with Rockwren and dependencies as frozen modules
@@ -48,6 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 <!-- Links -->
-[Unreleased]: https://github.com/ccrighton/micropython-rockwren/tree/1.0.0...main
+[Unreleased]: https://github.com/ccrighton/rockwren/compare/v1.0.0...HEAD
 
-[1.0.0]: https://github.com/ccrighton/micropython-rockwren/tree/1.0.0
+[1.0.0]: https://github.com/ccrighton/rockwren/releases/tag/v1.0.0
