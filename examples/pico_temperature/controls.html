@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Charles Crighton <code@crighton.net.nz>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-<!-- Hide device-state as we don't need it but it's expected by rockwren -->
+
 <script>
     function updateTemperature() {
         console.log(deviceState.temperature);
@@ -23,6 +23,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
   content:"\2103";
 }
 </style>
-
+<!-- Hide device-state as we don't need it but it's expected by rockwren -->
 <h3 hidden id="device-state"></h3>
 <div id="temperature">--</div>
