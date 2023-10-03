@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## Released
-## [1.0.0] - 2023-09-28
+## [1.0.0] - 2023-10-03
 
 ### Added
 - Initial micropython-rockwren version

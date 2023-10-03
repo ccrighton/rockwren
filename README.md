@@ -6,21 +6,28 @@ SPDX-License-Identifier: CC-BY-4.0
 
 # [micropython-rockwren](https://github.com/ccrighton/rockwren)
 
-Rockwren is a micropython device application framework to simplify the creation of
-connected devices such as lights, switches, and sensors.  It is designed for the
-Raspberry Pi Pico W but also runs on less capable devices such as the ESP8266.
+Rockwren is a [micropython](https://micropython.org/) device application framework to simplify the creation of
+connected devices such as lights, switches, and sensors.  It is designed for the Raspberry Pi Pico W but also
+runs on less capable devices such as the ESP8266.
 
-Why call this package rockwren?
+See [Quick Start](#quick-start) to get your first application running.
+
+**Why call this package rockwren?**
 
 The [New Zealand rock wren (Pīwauwau)](https://www.doc.govt.nz/nature/native-animals/birds/birds-a-z/rock-wren-tuke/)
 is a tiny but widely admired alpine bird that lives in the mountains of Fiordland in New Zealand. It's ability to
 live life year round in a very harsh environment and it's small size seemed apt when thinking of a name for this
 micropython package.
 
-## Links
-- Source code repository: https://github.com/ccrighton/rockwren
-- Find existing issues or raise a bug: https://github.com/ccrighton/rockwren/issues
-- Package repository: https://pypi.org/project/micropython-rockwren/
+**Who should use Rockwren?**
+
+Developers who would like to create micropython based devices with web, MQTT, AWS IoT, and
+[Home Assistant](https://www.home-assistant.io/) support built in.
+
+**What is the goal of the Rockwren project?**
+
+Provide a micropython package that simplifies IoT device development.  Provide connectivity
+out-of-the-box so the developer can focus their efforts on the specific capabilities of the device.
 
 ## Features
 
@@ -34,15 +41,22 @@ micropython package.
   - A log viewer
   - A device information viewer
 
+## Links
+- Changelog: https://github.com/ccrighton/rockwren/changelog.md
+- Source code repository: https://github.com/ccrighton/rockwren
+- Documentation: https://github.com/ccrighton/rockwren/docs/TOC.md
+- Find existing issues or raise a bug: https://github.com/ccrighton/rockwren/issues
+- Package repository: https://pypi.org/project/micropython-rockwren/
+
 ## Dependencies
 Rockwren depends on:
 - [Micropython](https://micropython.org)
 - A fork of the Pimoroni Phew web server: [Phew](https://github.com/ccrighton/phew)
 - An MQTT client: [umqtt.simple2](https://github.com/fizista/micropython-umqtt.simple2) and [umqtt.robust2](https://github.com/fizista/micropython-umqtt.robust2) by [Wojciech Banaś](https://github.com/fizista)
 
-## Installing from PyPI
+## Quick Start
 
-### Thonny
+### Install with Thonny
 
 See the [Pico guide](https://projects.raspberrypi.org/en/projects/introduction-to-the-pico)
 for details on setting up Thonny and adding the Micropython firmware to your [Pico W](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html) or other similar device supporting micropython.
@@ -141,6 +155,12 @@ pipkin install micropython-rockwren
   - [pico_temperature](https://github.com/ccrighton/micropython-rockwren/examples/pico_temperature)
   - [pico_switch](https://github.com/ccrighton/micropython-rockwren/examples/pico_switch)
 
-## Further Documentation
+## Documentation
 
-Additional documentation on configuring and developing new devices is in github: [Rockwren Docs](https://github.com/ccrighton/rockwren/docs)
+Additional documentation on configuring and developing new devices is in github: [Rockwren Docs](https://github.com/ccrighton/rockwren/docs/TOC.md)
+
+# License
+
+Source code license: [GPL-3.0-or-later](https://spdx.org/licenses/GPL-3.0-or-later.html)
+
+Documentation license: [CC-BY-4.0](https://spdx.org/licenses/CC-BY-4.0.html)
