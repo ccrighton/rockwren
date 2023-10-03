@@ -42,9 +42,9 @@ out-of-the-box so the developer can focus their efforts on the specific capabili
   - A device information viewer
 
 ## Links
-- Changelog: https://github.com/ccrighton/rockwren/changelog.md
+- Changelog: https://github.com/ccrighton/rockwren/blob/main/changelog.md
 - Source code repository: https://github.com/ccrighton/rockwren
-- Documentation: https://github.com/ccrighton/rockwren/docs/TOC.md
+- Documentation: https://github.com/ccrighton/rockwren/blob/main/docs/TOC.md
 - Find existing issues or raise a bug: https://github.com/ccrighton/rockwren/issues
 - Package repository: https://pypi.org/project/micropython-rockwren/
 
@@ -150,14 +150,14 @@ pipkin install micropython-rockwren
 
 
 ## Other Example Device Applications
-  - [pico_led_light](https://github.com/ccrighton/micropython-rockwren/examples/pico_led_light)
-  - [pico_binary_sensor](https://github.com/ccrighton/micropython-rockwren/examples/pico_binary_sensor)
-  - [pico_temperature](https://github.com/ccrighton/micropython-rockwren/examples/pico_temperature)
-  - [pico_switch](https://github.com/ccrighton/micropython-rockwren/examples/pico_switch)
+  - [pico_led_light](https://github.com/ccrighton/rockwren/blob/main/examples/pico_led_light)
+  - [pico_binary_sensor](https://github.com/ccrighton/rockwren/blob/main/examples/pico_binary_sensor)
+  - [pico_temperature](https://github.com/ccrighton/rockwren/blob/main/examples/pico_temperature)
+  - [pico_switch](https://github.com/ccrighton/rockwren/blob/main/examples/pico_switch)
 
 ## Documentation
 
-Additional documentation on configuring and developing new devices is in github: [Rockwren Docs](https://github.com/ccrighton/rockwren/docs/TOC.md)
+Additional documentation on configuring and developing new devices is in github: [Rockwren Docs](https://github.com/ccrighton/rockwren/blob/main/docs/TOC.md)
 
 # License
 

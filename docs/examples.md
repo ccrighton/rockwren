@@ -14,25 +14,25 @@ SPDX-License-Identifier: CC-BY-4.0
 
 Control the onboard LED of a Pico W.
 
-Source: [pico_led_light](https://github.com/ccrighton/micropython-rockwren/examples/pico_led_light)
+Source: [pico_led_light](/examples/pico_led_light)
 
 ## Pico Binary Sensor
 
 Pico W binary sensor for door position based on switch on pin 22.
 
-Source: [pico_binary_sensor](https://github.com/ccrighton/micropython-rockwren/examples/pico_binary_sensor)
+Source: [pico_binary_sensor](/examples/pico_binary_sensor)
 
 ## Pico Temperature Sensor
 
 Pico W sensor that reports reads the onboard temperature.
 
-Source: [pico_temperature](https://github.com/ccrighton/micropython-rockwren/examples/pico_temperature)
+Source: [pico_temperature](/examples/pico_temperature)
 
 ## Pico Switch
 
 Pico W switch on pin 22.
 
-Source: [pico_switch](https://github.com/ccrighton/micropython-rockwren/examples/pico_switch)
+Source: [pico_switch](/examples/pico_switch)
 
 ## ESP8266 LED Light
 

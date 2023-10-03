@@ -182,15 +182,15 @@ the device.
 ```
 
 ```controls.html``` can also be extended with javascript and css to provide highly configurable controls.  The
-[pico_temperature](https://github.com/ccrighton/rockwren/examples/pico_temperature) example has a
-[controls.html](https://github.com/ccrighton/rockwren/examples/pico_temperature/controls.html) with both javascript
+[pico_temperature](/examples/pico_temperature) example has a
+[controls.html](/examples/pico_temperature/controls.html) with both javascript
 and css style blocks.
 
 ## What next?
 
 Check out the other example device applications for the Pico W:
 
-  - [pico_led_light](https://github.com/ccrighton/rockwren/examples/pico_led_light)
-  - [pico_binary_sensor](https://github.com/ccrighton/rockwren/examples/pico_binary_sensor)
-  - [pico_temperature](https://github.com/ccrighton/rockwren/examples/pico_temperature)
-  - [pico_switch](https://github.com/ccrighton/rockwren/examples/pico_switch)
+  - [pico_led_light](/examples/pico_led_light)
+  - [pico_binary_sensor](/examples/pico_binary_sensor)
+  - [pico_temperature](/examples/pico_temperature)
+  - [pico_switch](/examples/pico_switch)
