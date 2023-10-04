@@ -28,7 +28,12 @@ def download_and_extract(package_name, outdir):
 
     with PyPIJSON() as client:
         requests_metadata = client.get_metadata(package_name)
-        pkg = requests_metadata.urls[0]
+        pkg = ''
+        for i in range(len(requests_metadata.urls)):
+            if requests_metadata.urls[i]['packagetype'] == 'sdist':
+                pkg = requests_metadata.urls[i]
+                break
+
         pprint(pkg)
         filename = pkg['filename']
         url = pkg['url']

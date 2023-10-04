@@ -59,11 +59,11 @@ build-mp-esp8266:
 	docker run --rm -v ${HOME}:${HOME} -u ${UID} -w ${PWD}/build/micropython larsks/esp-open-sdk make -C ports/esp8266 V=1 -j BOARD=ESP8266_GENERIC
 
 stage-libraries: activate-venv install-requirements dist
-	python unpack.py -f dist/rockwren-*.tar.gz -d build/lib -m rockwren
+	python unpack.py -f dist/micropython-rockwren-*.tar.gz -d build/lib -m rockwren
 	python get-libs.py -o build/lib -m micropython-ccrighton-phew
 	python get-libs.py -o build/lib -m micropython_umqtt.simple2
 	python get-libs.py -o build/lib -m micropython_umqtt.robust2
-	rm -r build/lib/*/__pycache__
+	#-rm -r build/lib/*/__pycache__
 
 copy-esp8266-modules: stage-libraries
 	cp -r build/lib/umqtt ${PWD}/build/micropython/ports/esp8266/modules
