@@ -135,6 +135,21 @@ rockwren.fly(PicoWLED())
 9. Reconnect to the same SSID and in a browser navigate to IP address of the device.
 10. Click ```TOGGLE``` to turn the Pico W LED on and off.
 
+### Shortcut to skip AP configuration
+
+Create a file call ```env.json``` with the following JSON replacing the ```YOUR-SSID``` AND ```YOUR-SSID-PASSWORD```.
+```mqtt_server``` and ```mqtt_port``` can be configured in this way too.  mqtt_port of 0 uses the default.
+
+```json
+{"ssid": "YOUR-SSID", "password": "YOUR-SSID-PASSWORD", "mqtt_server": "", "mqtt_port": 0, "first_boot": false }
+```
+
+Copy to the device:
+
+```commandline
+mpremote cp env.json :
+```
+
 ### Pipkin
 
 It is also possible to install from PyPI using the [```pipkin```](https://pypi.org/project/pipkin/) tool for managing micropython distribution packages.
