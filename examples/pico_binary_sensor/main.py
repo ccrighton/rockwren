@@ -25,7 +25,7 @@ class PicoWBinarySensor(rockwren.Device):
         uasyncio.create_task(self.switch_interrupt_handler())
 
         self.led = Pin("LED", Pin.OUT)
-        super().__init__(name="PicoWSwitch", device_type=b"switch")  # Always call last
+        super().__init__(name="PicoWSwitch")  # Always call last
 
     def apply_state(self):
 

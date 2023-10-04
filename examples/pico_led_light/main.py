@@ -11,7 +11,7 @@ class PicoWLED(rockwren.Device):
 
     def __init__(self):
         self.led = Pin("LED", Pin.OUT)
-        super().__init__(name="PicoWLED", device_type=b"light")  # Always call last
+        super().__init__(name="PicoWLED")  # Always call last
 
     def apply_state(self):
 

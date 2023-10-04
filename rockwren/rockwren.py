@@ -34,9 +34,8 @@ class Device:
     device state, handle web ui state changes and so on.
     """
 
-    def __init__(self, name="RockwrenDevice", device_type=b"light"):
+    def __init__(self, name="RockwrenDevice"):
         self.name = name
-        self.device_type = device_type
         self.state = "OFF"
         self.web = None
         self.mqtt_client: mqtt_client.MqttDevice = None
@@ -90,7 +89,6 @@ class Device:
         """
         return ujson.dumps({'device': {
             'name': self.name,
-            'type': self.device_type,
             'rockwren_version': __version__,
             'unique_id': ubinascii.hexlify(machine.unique_id()),
             'platform': sys.platform,

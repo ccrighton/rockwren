@@ -18,7 +18,7 @@ class PicoWTemperature(rockwren.Device):
         self.timer = Timer(period=5000, mode=Timer.PERIODIC, callback=self.timer_callback)
         self.adc = ADC(4)
         self.temperature = 0
-        super().__init__(name="PicoWTemperature", device_type=b"sensor")  # Always call last
+        super().__init__(name="PicoWTemperature")  # Always call last
         self.template = "/controls.html"
         self.update_temperature()
 

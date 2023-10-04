@@ -225,7 +225,7 @@ def default_discovery(mqtt_client: MqttDevice):
         See https://www.home-assistant.io/integrations/light.mqtt/
         :returns array of tuples (device_type, discovery_json)
     """
-    return [("light", {"unique_id": f"{mqtt_client.device_id}_{mqtt_client.device.device_type}",
+    return [("light", {"unique_id": f"{mqtt_client.device_id}_light",
                        "name": mqtt_client.device.name,
                        "platform": "mqtt",
                        "schema": "json",
