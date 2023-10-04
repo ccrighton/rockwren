@@ -16,6 +16,8 @@ Control the onboard LED of a Pico W.
 
 Source: [pico_led_light](/examples/pico_led_light)
 
+![Pico Switch Example Main Page](images/main-screen.png)
+
 ## Pico Binary Sensor
 
 Pico W binary sensor for door position based on switch on pin 22.
@@ -28,11 +30,15 @@ Pico W sensor that reports reads the onboard temperature.
 
 Source: [pico_temperature](/examples/pico_temperature)
 
+![Pico Temperature Example Main Page](images/picow_temperature_example.png)
+
 ## Pico Switch
 
 Pico W switch on pin 22.
 
 Source: [pico_switch](/examples/pico_switch)
+
+![Pico Switch Example Main Page](images/picow_switch_example.png)
 
 ## ESP8266 LED Light
 
