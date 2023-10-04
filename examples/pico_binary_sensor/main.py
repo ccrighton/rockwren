@@ -64,7 +64,7 @@ class PicoWBinarySensor(rockwren.Device):
     def discovery_function(self):
         return [("binary_sensor", {"unique_id": f"{self.mqtt_client.device_id}_door",
                                    "name": "Rockwren Pico W Door Position Binary Sensor",
-                                   "platform": "door",
+                                   "device_class": "door",
                                    "state_topic": self.mqtt_client.state_topic,
                                    "availability": {
                                        "topic": self.mqtt_client.availability_topic
