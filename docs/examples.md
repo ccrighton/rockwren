@@ -8,7 +8,9 @@ SPDX-License-Identifier: CC-BY-4.0
 
 - [Pico LED Light](#pico-led-light)
 - [Pico Binary Sensor](#pico-binary-sensor)
+- [Pico Temperature Sensore](#pico-temperature-sensor)
 - [Pico Switch](#pico-switch)
+- [ESP8266 LED Light](#esp8266-led-light)
 
 ## Pico LED Light
 
