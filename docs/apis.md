@@ -252,6 +252,11 @@ green, warmwhite, and brightness.
 
 ## MQTT API
 
+- [MQTT Command Handler](#mqtt-command-handler)
+- [Home Assistant MQTT Discovery](#home-assistant-mqtt-discovery)
+
+### MQTT Command Handler
+
 Rockwren subscribes to the device topic but will only process commands on the command topic. The command topic is set
 by default. For example: ```rockwren/e6614103e7328b23/command```.  Commands received on this topic will trigger a call
 to the ```rockwren.Device.command_handler(self, topic, message)``` function.  Custom MQTT command handling is
@@ -269,3 +274,9 @@ def command_handler(self, topic, message):
             self.state = "OFF"
     super().command_handler(topic, message)  # Always call last
 ```
+
+### Home Assistant MQTT Discovery
+
+Device discovery messages for a device are implemented in ```rockwren.Device.discovery_function```.
+
+See [Home Assistant Discovery](home-assistant-discovery.md)

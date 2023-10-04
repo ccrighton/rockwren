@@ -12,6 +12,7 @@ SPDX-License-Identifier: CC-BY-4.0
 - [Installation](install.md)
 - [Pico W LED Light Tutorial](picow-led-light-tutorial.md)
 - [Developer Guide/APIs](apis.md)
+- [Home Assistant Device Discovery](home-assistant-discovery.md)
 - [Examples](examples.md)
 - [Change Log/Release Notes](../changelog.md)
 
