@@ -138,7 +138,6 @@ def mqtt_config_save(request):
 
     mqtt_server = request.form.get("mqtt_server", None)
     if mqtt_server:
-        logging.debug(f"{utils.is_fqdn(mqtt_server)}: '{mqtt_server}'")
         numbers = mqtt_server.split(".")
         if len(numbers) == 4 and all(number.isdigit() for number in numbers):
             networking.save_network_config_key("mqtt_server", mqtt_server)
@@ -146,6 +145,8 @@ def mqtt_config_save(request):
         elif utils.is_fqdn(mqtt_server):
             networking.save_network_config_key("mqtt_server", mqtt_server)
             mqtt_config_updated = True
+    else:
+        networking.save_network_config_key("mqtt_server", "")
     mqtt_port = request.form.get("mqtt_port", None)
     if mqtt_port:
         networking.save_network_config_key("mqtt_port", int(mqtt_port))
@@ -176,7 +177,7 @@ def view_logs(request):
 
 
 @webapp.route("/information", methods=["GET"])
-def view_logs(request):
+def view_information(request):
     """ View device information """
     return template.render_template(DIR_PATH + "/information.html",
                                     web_path=DIR_PATH,

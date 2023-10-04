@@ -98,9 +98,9 @@ class Device:
             'mqtt': {
             'server': rockwren_env.MQTT_SERVER,
             'port': rockwren_env.MQTT_PORT,
-            'command-topic': self.mqtt_client.command_topic,
-            'availability-topic': self.mqtt_client.availability_topic,
-            'state-topic': self.mqtt_client.state_topic,
+            'command-topic': self.mqtt_client.command_topic if self.mqtt_client else '',
+            'availability-topic': self.mqtt_client.availability_topic if self.mqtt_client else '',
+            'state-topic': self.mqtt_client.state_topic if self.mqtt_client else '',
         },
             'network': {
             'ssid': rockwren_env.SSID,
@@ -242,10 +242,14 @@ def fly(the_device: Device):
 
             uasyncio.create_task(ntptime_retries())
 
-            client = mqtt_client.MqttDevice(the_device, rockwren_env.MQTT_SERVER, rockwren_env.CONNECTION_PARAMS,
-                                            command_handler=the_device.command_handler,
-                                            mqtt_port=int(rockwren_env.MQTT_PORT))
-            client.run(uasyncio.get_event_loop())
+            if rockwren_env.MQTT_SERVER:
+                logging.info("MQTT client starting.")
+                client = mqtt_client.MqttDevice(the_device, rockwren_env.MQTT_SERVER, rockwren_env.CONNECTION_PARAMS,
+                                                command_handler=the_device.command_handler,
+                                                mqtt_port=int(rockwren_env.MQTT_PORT))
+                client.run(uasyncio.get_event_loop())
+            else:
+                logging.info("MQTT client not started.  Set MQTT Server ip or fqdn to enable")
 
             web.run(uasyncio.get_event_loop())
 

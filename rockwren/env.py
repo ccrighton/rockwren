@@ -5,7 +5,7 @@ from micropython import const
 """ Global variables set from jsondb on boot """
 SSID = ''
 FIRST_BOOT = False
-MQTT_SERVER = '192.168.1.7'
+MQTT_SERVER = ''
 MQTT_PORT = 0
 MQTT_CLIENT_CERT = None
 MQTT_CLIENT_KEY = None

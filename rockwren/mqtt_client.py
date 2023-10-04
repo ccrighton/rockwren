@@ -147,7 +147,7 @@ class MqttDevice:
             if self._mqtt_client.is_conn_issue():
                 while self._mqtt_client.is_conn_issue():
                     logging.info("mqtt trying to reconnect")
-                    await uasyncio.sleep(1)
+                    await uasyncio.sleep(5)
                     # If the connection is successful, the is_conn_issue
                     # method will not return a connection error.
                     try:
