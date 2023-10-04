@@ -194,6 +194,19 @@ def set_global_exception(loop):
     loop.set_exception_handler(handle_exception)
 
 
+async def ntptime_retries():
+    # co-routine to set time using NTP and retry every 5 seconds until successful
+    while True:
+        try:
+            ntptime.settime()
+            logging.debug("ntptime set.")
+            break
+        except:
+            logging.debug("ntptime failed.  Retry in 5 seconds.")
+            await uasyncio.sleep(5)
+            continue
+
+
 def fly(the_device: Device):
     """
     Convenience method to start a device with web and mqtt capabilities.
@@ -229,7 +242,7 @@ def fly(the_device: Device):
             set_global_exception(uasyncio.get_event_loop())
             rockwren_env.CONNECTION_PARAMS = networking.connect()
 
-            ntptime.settime()
+            uasyncio.create_task(ntptime_retries())
 
             client = mqtt_client.MqttDevice(the_device, rockwren_env.MQTT_SERVER, rockwren_env.CONNECTION_PARAMS,
                                             command_handler=the_device.command_handler,
