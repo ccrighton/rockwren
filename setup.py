@@ -108,7 +108,7 @@ setup(
                                "mqtt_config.html",
                                "page_not_found.html",
                                "restart.html",
-                               "style.css",
+                               "style.tpl",
                                "viewlogs.html",
                                "wifi_config.html",
                                "wifi_setup.html"]},
@@ -116,6 +116,8 @@ setup(
         'micropython_umqtt.simple2==2.2.0',
         'micropython_umqtt.robust2==2.2.0',
         'micropython-ccrighton-phew',
+        'microdot',
+        'utemplate'
     ],
     cmdclass={'sdist': SdistAndMinify}
 )

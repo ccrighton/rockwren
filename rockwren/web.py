@@ -10,6 +10,13 @@ import sys
 
 import machine
 import uasyncio
+from microdot_asyncio import Microdot
+from microdot_asyncio import redirect
+from microdot_asyncio import Request
+from microdot_asyncio import Response
+from microdot_asyncio import send_file
+from microdot_utemplate import init_templates
+from microdot_utemplate import render_template
 from micropython import const
 
 from . import env
@@ -17,17 +24,17 @@ from . import networking
 from . import rockwren
 from . import utils
 from phew import logging
-from phew import server
-from phew import template
 
-DIR_PATH = "/lib/rockwren"
+DIR_PATH = ""
 STATUS_CODE_200 = const(200)
 STATUS_CODE_302 = const(302)
 STATUS_CODE_400 = const(400)
 STATUS_CODE_404 = const(404)
 
 # Web application for controlling the device
-webapp = server.Phew()
+webapp = Microdot()
+webapp.debug = True
+init_templates("/lib/rockwren")
 
 # device represents the functions of the device
 device: rockwren.Device = None
@@ -35,22 +42,22 @@ device: rockwren.Device = None
 
 def run(loop) -> None:
     """ Run the web app as a task in the asyncio loop """
-    webapp.run_as_task(loop)
+    webapp.run()
 
 
 @webapp.route("/", methods=["GET"])
 def index(request):
     """ Home page """
-    return template.render_template(DIR_PATH + "/index.html",
-                                    web_path=DIR_PATH,
-                                    device=device)
+    return render_template(DIR_PATH + "index.html",
+                           web_path=DIR_PATH,
+                           device=device)
 
 
 @webapp.route("/device", methods=["GET"])
 def device_control(request):
     """ Return json formatted information about the device """
     if device:
-        return server.Response(device.information(), 200, {"Content-Type": "application/json"})
+        return Response(device.information(), 200, {"Content-Type": "application/json"})
     return "Device not found", STATUS_CODE_400
 
 
@@ -59,20 +66,20 @@ def device_control(request):
     """ Handle device control messages """
 
     if not request.form:
-        return server.Response('{"error": "Bad request"}', STATUS_CODE_400, {"Content-Type": "application/json"})
+        return Response('{"error": "Bad request"}', STATUS_CODE_400, {"Content-Type": "application/json"})
     if device:
         try:
             resp, status = device.web_post_handler(request.form)
-            return server.Response(resp, status, {"Content-Type": "application/json"})
+            return Response(resp, status, {"Content-Type": "application/json"})
         except Exception as ex:
             try:
                 trace = io.StringIO()
                 sys.print_exception(ex, trace)
                 utils.logstream(trace)
             finally:
-                return server.Response('{"error": "Error handling device control request"}', STATUS_CODE_400,
-                                       {"Content-Type": "application/json"})
-    return server.Response('{"error": "Device not found"}', STATUS_CODE_400, {"Content-Type": "application/json"})
+                return Response('{"error": "Error handling device control request"}', STATUS_CODE_400,
+                                {"Content-Type": "application/json"})
+    return Response('{"error": "Device not found"}', STATUS_CODE_400, {"Content-Type": "application/json"})
 
 
 @webapp.route("/device/state", methods=["GET"])
@@ -80,8 +87,8 @@ def device_state(request):
     """ Get device state """
 
     if device:
-        return server.Response(device.device_state(), STATUS_CODE_200, {"Content-Type": "application/json"})
-    return server.Response('{"error": "Device not found"}', STATUS_CODE_400, {"Content-Type": "application/json"})
+        return Response(device.device_state(), STATUS_CODE_200, {"Content-Type": "application/json"})
+    return Response('{"error": "Device not found"}', STATUS_CODE_400, {"Content-Type": "application/json"})
 
 
 async def delayed_restart(delay_secs):
@@ -94,29 +101,29 @@ async def delayed_restart(delay_secs):
 def restart(request):
     """ Restart the device after a delay. """
     uasyncio.create_task(delayed_restart(5))
-    return template.render_template(DIR_PATH + "/restart.html", web_path=DIR_PATH)
+    return render_template(DIR_PATH + "/restart.html", web_path=DIR_PATH)
 
 
 @webapp.route("/mqtt_config", methods=["GET"])
 def mqtt_config(request):
     """ MQTT configuration """
-    return template.render_template(DIR_PATH + "/mqtt_config.html",
-                                    web_path=DIR_PATH,
-                                    device=device,
-                                    ip_address=env.CONNECTION_PARAMS["ip_address"],
-                                    subnet_mask=env.CONNECTION_PARAMS["subnet_mask"],
-                                    gateway=env.CONNECTION_PARAMS["gateway"],
-                                    dns_server=env.CONNECTION_PARAMS["dns_server"],
-                                    mqtt_server=env.MQTT_SERVER,
-                                    mqtt_port=str(env.MQTT_PORT),
-                                    mqtt_client_cert=env.MQTT_CLIENT_CERT,
-                                    mqtt_client_key_stored=env.MQTT_CLIENT_KEY is not None)
+    return render_template(DIR_PATH + "/mqtt_config.html",
+                           web_path=DIR_PATH,
+                           device=device,
+                           ip_address=env.CONNECTION_PARAMS["ip_address"],
+                           subnet_mask=env.CONNECTION_PARAMS["subnet_mask"],
+                           gateway=env.CONNECTION_PARAMS["gateway"],
+                           dns_server=env.CONNECTION_PARAMS["dns_server"],
+                           mqtt_server=env.MQTT_SERVER,
+                           mqtt_port=str(env.MQTT_PORT),
+                           mqtt_client_cert=env.MQTT_CLIENT_CERT,
+                           mqtt_client_key_stored=env.MQTT_CLIENT_KEY is not None)
 
 
 @webapp.route("/favicon.svg", methods=["GET"])
 def favicon(request):
     """" Serve favicon """
-    return server.serve_file(DIR_PATH + "/favicon.svg")
+    return send_file(DIR_PATH + "/favicon.svg")
 
 
 @webapp.route("/log", methods=["GET"])
@@ -125,14 +132,14 @@ def favicon(request):
     if sys.platform == "esp8266":
         """ Do a gc before serving file to ensure sufficient memory """
         gc.collect()
-    return server.serve_file("/log.txt")
+    return send_file("/log.txt")
 
 
 @webapp.route("/mqtt_config", methods=["POST"])
 def mqtt_config_save(request):
     """ Handle MQTT configuration form post """
     if not request.form:
-        return server.redirect("/mqtt_config", status=STATUS_CODE_302)
+        return redirect("/mqtt_config", status=STATUS_CODE_302)
 
     mqtt_config_updated = False
 
@@ -163,35 +170,35 @@ def mqtt_config_save(request):
         mqtt_config_updated = True
 
     if mqtt_config_updated:
-        return server.redirect("/restart", status=STATUS_CODE_302)
+        return redirect("/restart", status=STATUS_CODE_302)
     else:
-        return server.redirect("/mqtt_config", status=STATUS_CODE_302)
+        return redirect("/mqtt_config", status=STATUS_CODE_302)
 
 
 @webapp.route("/viewlogs", methods=["GET"])
 def view_logs(request):
     """ View device logs """
-    return template.render_template(DIR_PATH + "/viewlogs.html",
-                                    web_path=DIR_PATH,
-                                    device=device)
+    return render_template(DIR_PATH + "/viewlogs.html",
+                           web_path=DIR_PATH,
+                           device=device)
 
 
 @webapp.route("/information", methods=["GET"])
 def view_information(request):
     """ View device information """
-    return template.render_template(DIR_PATH + "/information.html",
-                                    web_path=DIR_PATH,
-                                    device=device,
-                                    ip_address=env.CONNECTION_PARAMS["ip_address"],
-                                    subnet_mask=env.CONNECTION_PARAMS["subnet_mask"],
-                                    gateway=env.CONNECTION_PARAMS["gateway"],
-                                    dns_server=env.CONNECTION_PARAMS["dns_server"],
-                                    mqtt_server=env.MQTT_SERVER,
-                                    mqtt_port=env.MQTT_PORT)
+    return render_template(DIR_PATH + "/information.html",
+                           web_path=DIR_PATH,
+                           device=device,
+                           ip_address=env.CONNECTION_PARAMS["ip_address"],
+                           subnet_mask=env.CONNECTION_PARAMS["subnet_mask"],
+                           gateway=env.CONNECTION_PARAMS["gateway"],
+                           dns_server=env.CONNECTION_PARAMS["dns_server"],
+                           mqtt_server=env.MQTT_SERVER,
+                           mqtt_port=env.MQTT_PORT)
 
 
 @webapp.route("/wifi_config", methods=["GET", "POST"])
-def wifi_config(request: server.Request):
+def wifi_config(request: Request):
 
     message = None
     if request.method == "POST":
@@ -201,7 +208,7 @@ def wifi_config(request: server.Request):
         if ssid and password and ssid != "" and password != "":
             try:
                 networking.save_network_config(ssid, password)
-                return server.redirect("/restart", status=303)
+                return redirect("/restart", status=303)
             except Exception as ex:
                 message = "wifi_config: failed to save network config"
                 logging.error(message)
@@ -217,10 +224,10 @@ def wifi_config(request: server.Request):
     except:
         pass
 
-    return template.render_template(DIR_PATH + "/wifi_config.html",
-                                    web_path=DIR_PATH,
-                                    networks=network_list,
-                                    error=message)
+    return render_template(DIR_PATH + "/wifi_config.html",
+                           web_path=DIR_PATH,
+                           networks=network_list,
+                           error=message)
 
 
 async def delayed_restart(delay_secs):
@@ -234,10 +241,10 @@ def restart(request):
     """ Restart device. """
     if networking.first_boot_present():
         uasyncio.create_task(delayed_restart(5))
-    return template.render_template(DIR_PATH + "/restart.html", web_path=DIR_PATH)
+    return render_template(DIR_PATH + "/restart.html", web_path=DIR_PATH)
 
 
-@webapp.catchall()
+@webapp.errorhandler(404)
 def page_not_found(request):
     """ 404 page not found """
-    return template.render_template(DIR_PATH + "/page_not_found.html", web_path=DIR_PATH), STATUS_CODE_404
+    return render_template(DIR_PATH + "page_not_found.html", web_path=DIR_PATH), STATUS_CODE_404

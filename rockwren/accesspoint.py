@@ -12,8 +12,8 @@ import uasyncio
 from micropython import const
 
 from phew import logging
-from phew import server
-from phew import template
+from microdot_asyncio import Microdot, Request, Response, send_file, redirect
+from microdot_utemplate import render_template, init_templates
 from . import networking
 from . import utils
 
@@ -24,7 +24,8 @@ except Exception:
 
 
 ap = None
-accesspointapp = server.Phew()
+accesspointapp = Microdot()
+init_templates("")
 dir_path = "/lib/rockwren"
 STATUS_CODE_404 = const(404)
 
@@ -39,7 +40,7 @@ def wifi_setup(request):
         if ssid and password and ssid != "" and password != "":
             try:
                 networking.save_network_config(ssid, password)
-                return server.redirect("/restart", status=303)
+                return redirect("/restart", status=303)
             except Exception as ex:
                 message = "wifi_config: failed to save network config"
                 logging.error(message)
@@ -55,10 +56,10 @@ def wifi_setup(request):
     except:
         pass
 
-    return template.render_template(dir_path + "/wifi_setup.html",
-                                    web_path=dir_path,
-                                    networks=network_list,
-                                    error=message)
+    return render_template(dir_path + "/wifi_setup.html",
+                           web_path=dir_path,
+                           networks=network_list,
+                           error=message)
 
 
 async def delayed_restart(delay_secs):
@@ -72,20 +73,20 @@ def restart(request):
     """ Restart device. """
     if networking.first_boot_present():
         uasyncio.create_task(delayed_restart(5))
-    return template.render_template(dir_path + "/restart.html", web_path=dir_path)
+    return render_template(dir_path + "/restart.html", web_path=dir_path)
 
 
 @accesspointapp.route("/favicon.svg", methods=["GET"])
 def favicon(request):
     """ Serve favicon. """
-    return server.serve_file(dir_path + "/favicon.svg")
+    return send_file(dir_path + "/favicon.svg")
 
 
-@accesspointapp.catchall()
+@accesspointapp.errorhandler(404)
 def page_not_found(request):
     """ Handle page not found. """
-    return template.render_template(dir_path + "/page_not_found.html",
-                                    web_path=dir_path), STATUS_CODE_404
+    return render_template(dir_path + "/page_not_found.html",
+                           web_path=dir_path), STATUS_CODE_404
 
 
 async def serve_client(reader, writer):
